@@ -9,7 +9,7 @@ env.read_env()
 
 async def db_connect():
     try:
-        conn = await asyncpg.connect(user=env('user'),  password=env('password'), database=env('db_name'), host=env('host'), port=env('port'))
+        conn = await asyncpg.connect(user=env('user'),  password=env('password'), database=env('db_name'), host=env('host'))
 
         await conn.execute('''CREATE TABLE IF NOT EXISTS users(id BIGSERIAL NOT NULL PRIMARY KEY,
                                                             tg_id BIGSERIAL,
