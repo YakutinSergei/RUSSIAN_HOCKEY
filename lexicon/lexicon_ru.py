@@ -17,7 +17,9 @@ PLAYERS: dict[str, str] = {
 PAGE = {'backward': '◀️',
            'forward': '▶️',
         'back': '↩️Назад',
-        'replace': '🔁Замена'}
+        'replace': '🔁Замена',
+        'choice': '✅Выбрать'
+       }
 
 Attributes_players: dict[str, str] = {
     'name': '👤Имя',

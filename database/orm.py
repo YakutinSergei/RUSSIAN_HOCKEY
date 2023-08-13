@@ -253,7 +253,7 @@ async def get_my_commands(tg_id):
                                      host=env('host'))
 
         command = []
-        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
+        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
                                       f"goalkeepers.endurance, goalkeepers.defense "
                                       f"FROM team "
                                       f"JOIN goalkeepers "
@@ -261,7 +261,7 @@ async def get_my_commands(tg_id):
         command.append(goalkeeper)
 
         for i in range(3):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.img, players.name, players.attack, "
+            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.id, players.img, players.name, players.attack, "
                                           f"players.endurance, players.power, players.defense "
                                           f"FROM team "
                                           f"JOIN players "
@@ -269,7 +269,7 @@ async def get_my_commands(tg_id):
             command.append(forward)
 
         for i in range(2):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.img, players.name, players.attack, "
+            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.id, players.img, players.name, players.attack, "
                                           f"players.endurance, players.power, players.defense "
                                           f"FROM team "
                                           f"JOIN players "
@@ -591,7 +591,7 @@ async def up_balance_user(tg_id, price):
             await conn.close()
             print('[INFO] PostgresSQL closed')
 
-'''Удаление карточки у игрока'''
+'''Удаление карточки у игрока при продаже'''
 async def card_del_user(tg_id, category, id_card):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
@@ -605,4 +605,51 @@ async def card_del_user(tg_id, category, id_card):
     finally:
         if conn:
             await conn.close()
+            print('[INFO] PostgresSQL closed')
+
+'''Получение игроков для команды'''
+async def get_players_team(tg_id, position):
+    try:
+        conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
+                                     host=env('host'))
+        pl_def = await conn.fetchrow(f"SELECT * FROM team  WHERE tg_id = {tg_id}")
+
+        if position > 3:
+            players = await conn.fetch(f"SELECT players.id, players.name, players.attack, "
+                                        f"players.endurance, players.power, players.defense "
+                                       f"FROM players_user "
+                                       f"JOIN players "
+                                       f"ON players_user.id_players = players.id "
+                                       f"AND players_user.id_user = {tg_id} "
+                                       f"AND players_user.position = '{PLAYERS['defender']}' "
+                                       f"AND players_user.id_players != {pl_def['defender_1']} "
+                                       f"AND players_user.id_players != {pl_def['defender_2']};")
+        elif position > 0:
+            players = await conn.fetch(f"SELECT players.id, players.name, players.attack, "
+                                       f"players.endurance, players.power, players.defense "
+                                        f"FROM players_user "
+                                        f"JOIN players "
+                                        f"ON players_user.id_players = players.id "
+                                       f"AND players_user.id_user = {tg_id} "
+                                       f"AND players_user.position = '{PLAYERS['forward']}' "
+                                       f"AND players_user.id_players != {pl_def['forward_1']} "
+                                       f"AND players_user.id_players != {pl_def['forward_2']} "
+                                       f"AND players_user.id_players != {pl_def['forward_3']};")
+        else:
+            players = await conn.fetch(f"SELECT goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
+                                        f"goalkeepers.endurance, goalkeepers.defense "
+                                        f"FROM players_user "
+                                        f"JOIN goalkeepers "
+                                        f"ON players_user.id_players = goalkeepers.id "
+                                       f"AND players_user.id_user = {tg_id} "
+                                        f"AND players_user.position = '{PLAYERS['goalkeeper']}' "
+                                       f"AND players_user.id_players != {pl_def['goalkeeper']};")
+
+    except Exception as _ex:
+        print('[INFO] Error ', _ex)
+
+    finally:
+        if conn:
+            await conn.close()
+            return players
             print('[INFO] PostgresSQL closed')
