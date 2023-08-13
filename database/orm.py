@@ -608,14 +608,14 @@ async def card_del_user(tg_id, category, id_card):
             print('[INFO] PostgresSQL closed')
 
 '''Получение игроков для команды'''
-async def get_players_team(tg_id, position):
+async def get_players_team(tg_id, category):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
         pl_def = await conn.fetchrow(f"SELECT * FROM team  WHERE tg_id = {tg_id}")
 
-        if position > 3:
-            players = await conn.fetch(f"SELECT players.id, players.name, players.attack, "
+        if category == PLAYERS['defender']:
+            players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
                                         f"players.endurance, players.power, players.defense "
                                        f"FROM players_user "
                                        f"JOIN players "
@@ -624,8 +624,8 @@ async def get_players_team(tg_id, position):
                                        f"AND players_user.position = '{PLAYERS['defender']}' "
                                        f"AND players_user.id_players != {pl_def['defender_1']} "
                                        f"AND players_user.id_players != {pl_def['defender_2']};")
-        elif position > 0:
-            players = await conn.fetch(f"SELECT players.id, players.name, players.attack, "
+        elif category == PLAYERS['forward']:
+            players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
                                        f"players.endurance, players.power, players.defense "
                                         f"FROM players_user "
                                         f"JOIN players "

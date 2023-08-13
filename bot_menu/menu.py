@@ -82,7 +82,7 @@ def create_pg_kb_players(pref: str, price: str, *buttons: str) -> InlineKeyboard
         text=PAGE[button] if button in PAGE else button,
         callback_data=f'{pref}_{button}') for button in buttons]).\
         row(InlineKeyboardButton(text=f'{price}', callback_data=f'price_{price.split(":")[0]}_{pref.split("_")[2]}_{pref.split("_")[3]}')).\
-        row(InlineKeyboardButton(text=PAGE['back'], callback_data=f'players'))
+        row(InlineKeyboardButton(text=PAGE['back'], callback_data=f'{pref}_players'))
     # Возвращаем объект инлайн-клавиатуры
     return kb_builder.as_markup()
 

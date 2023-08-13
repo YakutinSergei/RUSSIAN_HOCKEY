@@ -31,7 +31,6 @@ async def choice_menu(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith('my_team_'))
 async def my_team_page(callback: CallbackQuery):
-    print(callback.data)
     my_commands = await get_my_commands(callback.from_user.id)
     if callback.data.split("_")[-1] == 'forward':
         pg = int(callback.data.split("_")[2])
@@ -74,113 +73,65 @@ async def my_team_page(callback: CallbackQuery):
                                          reply_markup=kb_team(f"my_team_{pg}", pos,
                                                               'backward', PAGE['replace'], 'forward'))
     elif callback.data.split("_")[-1] == PAGE['replace']:
-        if callback.data.split('_')[-2] == PLAYERS['goalkeeper']:
-            players = await get_players_team(callback.from_user.id,
-                                             int(callback.data.split("_")[2]))
-            if players:
-                pg = 0
-                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                                 media=InputMediaPhoto(media=players[pg]['img'],
-                                                                           caption=caption_players(0, players[pg])),
-                                                                           reply_markup=create_pg_kb_players(
-                                                                               f"ch_team_{pg}_{callback.data.split('_')[-2]}",
-                                                                               PAGE['choice'], 'backward', f'{pg+1} / {len(players)}',
-                                                                               'forward'))
+        players = await get_players_team(callback.from_user.id,
+                                         callback.data.split("_")[-2])
+        if players:
+            if int(callback.data.split("_")[2]) > 0:
+                N = 1
+            else:
+                N = 0
+            pg = 0
+            await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
+                                             media=InputMediaPhoto(media=players[pg]['img'],
+                                                                       caption=caption_players(N, players[pg])),
+                                                                       reply_markup=create_pg_kb_players(
+                                                                           f"ch_team_{pg}_{callback.data.split('_')[-2]}",
+                                                                           PAGE['choice'], 'backward', f'{pg+1} / {len(players)}',
+                                                                           'forward'))
         else:
-            players = await get_players_team(callback.from_user.id,
-                                             int(callback.data.split("_")[2]))
-            if players:
-                pg = 0
-            print(players)
-            # players = await get_players_page(callback.data.split('_')[-2])
-            # user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[-2])
-            # price = f"✅Выбрать"
-            # len_pl = await len_card(players['id'], callback.data.split('_')[-2])
-            # for i in range(len(user_players)):
-            #     if user_players[i]['id_players'] == players['id']:
-            #         price = f"🌟Уже в команде"
-            # await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-            #                              media=InputMediaPhoto(media=players['img'],
-            #                                                    caption=caption_players(1, players)),
-            #                              reply_markup=create_pg_kb_players(
-            #                                  f"ch_team_0_{players['id']}_{callback.data.split('_')[-2]}",
-            #                                  PAGE['choice'], 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
-            #                                  'forward'))
+            await callback.message.answer(text='❌У вас нет других игроков❌', show_alert=True)
     await callback.answer()
 
 
 '''Листание страниц'''
 @router.callback_query(F.data.startswith('ch_team_'))
 async def paging_card(callback: CallbackQuery):
-    print(callback.data)
+    players = await get_players_team(callback.from_user.id,
+                                     callback.data.split("_")[-2])
     if callback.data.split('_')[-1] == 'forward':
-        if callback.data.split('_')[-2] == PLAYERS['goalkeeper']:
-            goalkeeper = await get_goalkeeper_next(int(callback.data.split('_')[3]))
-            if goalkeeper:
-                user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[-2])
-                price = f"✅Выбрать"
-                len_pl = await len_card(goalkeeper['id'], PLAYERS['goalkeeper'])
-                for i in range(len(user_goalkeeper)):
-                    if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
-                        price = f"🌟Уже в команде"
-                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=goalkeeper['img'],
-                                                                       caption=caption_players(0, goalkeeper)),
-                                                                       reply_markup=create_pg_kb_players(
-                                                                           f"ch_team_0_{goalkeeper['id']}_{callback.data.split('_')[-2]}",
-                                                                           price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
-                                                                           'forward'))
-        else:
-            players = await get_players_next_page(int(callback.data.split('_')[3]), callback.data.split('_')[-2])
-            if players:
-                user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[-2])
-                price = f"✅Выбрать"
-                len_pl = await len_card(players['id'], callback.data.split('_')[-2])
-                for i in range(len(user_players)):
-                    if user_players[i]['id_players'] == players['id']:
-                        price = f"🌟Уже в команде"
-                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=players['img'],
-                                                                   caption=caption_players(1, players)),
-                                             reply_markup=create_pg_kb_players(
-                                                 f"ch_team_0_{players['id']}_{callback.data.split('_')[-2]}",
-                                                 price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
-                                                 'forward'))
-    else:
-        if callback.data.split('_')[-2] == PLAYERS['goalkeeper']:
-            goalkeeper = await get_goalkeeper_previous(int(callback.data.split('_')[3]))
-            if goalkeeper:
-                user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[-2])
-                price = f"✅Выбрать"
-                len_pl = await len_card(goalkeeper['id'], PLAYERS['goalkeeper'])
-                for i in range(len(user_goalkeeper)):
-                    if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
-                        price = f"🌟Уже в команде"
-                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=goalkeeper['img'],
-                                                                       caption=caption_players(0, goalkeeper)),
-                                                                       reply_markup=create_pg_kb_players(
-                                                                           f"ch_team_0_{goalkeeper['id']}_{callback.data.split('_')[-2]}",
-                                                                           price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
-                                                                           'forward'))
-        else:
-            players = await get_players_previous_page(int(callback.data.split('_')[3]), callback.data.split('_')[-2])
-            if players:
-                user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[-2])
-                price = f"✅Выбрать"
-                len_pl = await len_card(players['id'], callback.data.split('_')[-2])
-                for i in range(len(user_players)):
-                    if user_players[i]['id_players'] == players['id']:
-                        price = f"🌟Уже в команде"
-                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=players['img'],
-                                                                   caption=caption_players(1, players)),
-                                             reply_markup=create_pg_kb_players(
-                                                 f"ch_team_0_{players['id']}_{callback.data.split('_')[-2]}",
-                                                 price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
-                                                 'forward'))
+        if players:
+            if callback.data.split("_")[-2] == PLAYERS['goalkeeper']:
+                N = 0
+            else:
+                N = 1
 
+            if int(callback.data.split('_')[2]) < len(players)-1:
+                pg = int(callback.data.split('_')[2]) + 1
+                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
+                                                 media=InputMediaPhoto(media=players[pg]['img'],
+                                                                           caption=caption_players(N, players[pg])),
+                                                                           reply_markup=create_pg_kb_players(
+                                                                               f"ch_team_{pg}_{callback.data.split('_')[-2]}",
+                                                                               PAGE['choice'], 'backward', f'{pg+1} / {len(players)}',
+                                                                               'forward'))
+    else:
+        if players:
+            if callback.data.split("_")[-2] == PLAYERS['goalkeeper']:
+                N = 0
+            else:
+                N = 1
+            if int(callback.data.split('_')[2]) > 0:
+                pg = int(callback.data.split('_')[2]) - 1
+                await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
+                                             media=InputMediaPhoto(media=players[pg]['img'],
+                                                                   caption=caption_players(N, players[pg])),
+                                             reply_markup=create_pg_kb_players(
+                                                 f"ch_team_{pg}_{callback.data.split('_')[-2]}",
+                                                 PAGE['choice'], 'backward', f'{pg + 1} / {len(players)}',
+                                                 'forward'))
     await callback.answer()
+
+
 
 '''Кнопка команда в чате'''
 @router.message(F.text=='🥅Команда')

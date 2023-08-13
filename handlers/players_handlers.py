@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, InputMediaPhoto, InputMediaAnimation
+from aiogram.types import CallbackQuery, InputMediaPhoto
 
 from bot_menu.menu import create_inline_kb, create_pg_kb_players, main_menu
 from create_bot import bot
@@ -15,7 +15,7 @@ router.callback_query.filter(F.message.chat.type == "private")
 
 
 '''Кнопака игроки'''
-@router.callback_query(F.data == 'players')
+@router.callback_query(F.data.endswith('players'))
 async def choice_player(callback: CallbackQuery):
     await callback.message.answer(text='Позиции игроков', reply_markup=create_inline_kb(1, 'ch_pl_', PLAYERS['forward'],
                                                                                         PLAYERS['defender'],
