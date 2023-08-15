@@ -52,16 +52,17 @@ async def menu_commands(message: Message):
         opp_indicator = await get_indicators(opp_commands)
         my_gol = 0
         opp_gol = 0
-        print(opp_commands)
-        for i in range(my_indicator[1] - opp_indicator[2]):
-            n = random.randint(1, 1000)
-            if n > opp_indicator[0]:
-                my_gol += 1
+        if my_indicator[1] - opp_indicator[2] > 0:
+            for i in range(my_indicator[1] - opp_indicator[2]):
+                n = random.randint(1, 1000)
+                if n > opp_indicator[0]:
+                    my_gol += 1
 
-        for i in range(opp_indicator[1] - my_indicator[2]):
-            n = random.randint(1, 1000)
-            if n > my_indicator[0]:
-                opp_gol += 1
+        if opp_indicator[1] - my_indicator[2] > 0:
+            for i in range(opp_indicator[1] - my_indicator[2]):
+                n = random.randint(1, 1000)
+                if n > my_indicator[0]:
+                    opp_gol += 1
 
         if my_gol > opp_gol:
             await up_command_ready(message.from_user.id, 3, my_gol, opp_gol)  # Делаем готовность False, обновляем время на текущее

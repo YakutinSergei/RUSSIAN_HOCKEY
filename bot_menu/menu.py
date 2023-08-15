@@ -104,10 +104,13 @@ def create_pg_choice_players(pref: str, price: str, *buttons: str) -> InlineKeyb
 btn_menu: KeyboardButton = KeyboardButton(text='⚙️МЕНЮ')
 btn_game: KeyboardButton = KeyboardButton(text='🏒🥅ИГРА')
 btn_command: KeyboardButton = KeyboardButton(text='🥅Команда')
+btn_bet: KeyboardButton = KeyboardButton(text='🎲Cтавки')
+btn_tournament: KeyboardButton = KeyboardButton(text='🏆Добавить турнир')
 btn_players_add: KeyboardButton = KeyboardButton(text=MENU['add_player'])
 menu_user_private: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=1, keyboard=[[btn_menu], [btn_game]],
                                                     resize_keyboard=True)
-menu_admin: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=1, keyboard=[[btn_menu], [btn_game], [btn_players_add]],
+menu_admin: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=2, keyboard=[[btn_menu], [btn_game], [btn_bet],
+                                                                         [btn_tournament], [btn_players_add]],
                                                     resize_keyboard=True)
 menu_user: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=1, keyboard=[[btn_command],[btn_game]],
                                                     resize_keyboard=True)

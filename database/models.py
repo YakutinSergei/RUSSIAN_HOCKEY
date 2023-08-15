@@ -62,6 +62,19 @@ async def db_connect():
                                                                             id_players INTEGER,
                                                                             position VARCHAR(50));''')
 
+        await conn.execute('''CREATE TABLE IF NOT EXISTS bets(id BIGSERIAL NOT NULL PRIMARY KEY,
+                                                                                    num_outcomes INTEGER,
+                                                                                    start_data TIMESTAMP,
+                                                                                    outcomes INTEGER DEFAULT '0',
+                                                                                    team_1 VARCHAR(50),
+                                                                                    team_2 VARCHAR(50));''')
+
+        await conn.execute('''CREATE TABLE IF NOT EXISTS bets_players(id BIGSERIAL NOT NULL PRIMARY KEY,
+                                                                            id_bets INTEGER,
+                                                                            tg_id BIGSERIAL,
+                                                                            outcomes VARCHAR(50));''')
+
+
         '''позиция 
         скорость
         мастерство катания
