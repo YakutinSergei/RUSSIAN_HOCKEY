@@ -86,6 +86,20 @@ def create_pg_kb_players(pref: str, price: str, *buttons: str) -> InlineKeyboard
     # Возвращаем объект инлайн-клавиатуры
     return kb_builder.as_markup()
 
+
+'''Клавиатура листания игроков с выбором в команду'''
+def create_pg_choice_players(pref: str, price: str, *buttons: str) -> InlineKeyboardMarkup:
+    # Инициализируем билдер
+    kb_builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
+    # Добавляем в билдер ряд с кнопками
+    kb_builder.row(*[InlineKeyboardButton(
+        text=PAGE[button] if button in PAGE else button,
+        callback_data=f'{pref}_{button}') for button in buttons]).\
+        row(InlineKeyboardButton(text=f'{price}', callback_data=f'{pref}_choice')).\
+        row(InlineKeyboardButton(text=PAGE['back'], callback_data=f'{pref}_team'))
+    # Возвращаем объект инлайн-клавиатуры
+    return kb_builder.as_markup()
+
 '''Обычное меню внизу'''
 btn_menu: KeyboardButton = KeyboardButton(text='⚙️МЕНЮ')
 btn_game: KeyboardButton = KeyboardButton(text='🏒🥅ИГРА')

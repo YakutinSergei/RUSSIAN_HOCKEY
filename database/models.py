@@ -58,7 +58,7 @@ async def db_connect():
                                                                         start_player BOOLEAN DEFAULT 'false');''')
 
         await conn.execute('''CREATE TABLE IF NOT EXISTS players_user(id BIGSERIAL NOT NULL PRIMARY KEY,
-                                                                            id_user INTEGER,
+                                                                            id_user BIGSERIAL,
                                                                             id_players INTEGER,
                                                                             position VARCHAR(50));''')
 

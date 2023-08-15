@@ -174,7 +174,7 @@ async def price_card(callback: CallbackQuery):
 
 '''Функция описания игрока'''
 def caption_players(N, player):
-    if N:
+    if N > 0:
         text = f'👤{player["name"]}\n' \
                f'{Attributes_players["attack"]}: {player["attack"]}\n' \
                f'{Attributes_players["endurance"]}: {player["endurance"]}\n' \

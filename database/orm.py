@@ -73,7 +73,6 @@ async def add_card_players(new_card):
 
 '''Добавление карточки вратаря'''
 
-
 async def add_card_goalkeeper(new_card):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
@@ -113,7 +112,6 @@ async def get_goalkeepers():
 
 
 '''Список команд'''
-
 
 async def get_name_commands(name):
     try:
@@ -652,4 +650,37 @@ async def get_players_team(tg_id, category):
         if conn:
             await conn.close()
             return players
+            print('[INFO] PostgresSQL closed')
+
+
+
+'''Обновление игроков в команде'''
+async def update_team(tg_id, card_user, old_card):
+    try:
+        conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
+                                     host=env('host'))
+        if old_card == 0:
+            await conn.fetchrow(f"UPDATE team SET goalkeeper = {card_user} WHERE tg_id = {tg_id}")
+        elif old_card == 1:
+            await conn.fetchrow(f"UPDATE team SET forward_1 = {card_user} WHERE tg_id = {tg_id}")
+        elif old_card == 2:
+            await conn.fetchrow(f"UPDATE team SET forward_2 = {card_user} WHERE tg_id = {tg_id}")
+        elif old_card == 3:
+            await conn.fetchrow(f"UPDATE team SET forward_3 = {card_user} WHERE tg_id = {tg_id}")
+        elif old_card == 4:
+            await conn.fetchrow(f"UPDATE team SET defender_1 = {card_user} WHERE tg_id = {tg_id}")
+        elif old_card == 5:
+            await conn.fetchrow(f"UPDATE team SET defender_2 = {card_user} WHERE tg_id = {tg_id}")
+
+
+
+
+
+
+    except Exception as _ex:
+        print('[INFO] Error ', _ex)
+
+    finally:
+        if conn:
+            await conn.close()
             print('[INFO] PostgresSQL closed')
