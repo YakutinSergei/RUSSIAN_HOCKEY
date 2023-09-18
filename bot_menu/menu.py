@@ -97,7 +97,8 @@ def create_pg_choice_players(pref: str, price: str, *buttons: str) -> InlineKeyb
         callback_data=f'{pref}_{button}') for button in buttons]).\
         row(InlineKeyboardButton(text=f'{price}', callback_data=f'{pref}_choice')).\
         row(InlineKeyboardButton(text=PAGE['back'], callback_data=f'{pref}_team'))
-    # Возвращаем объект инлайн-клавиатуры
+
+
     return kb_builder.as_markup()
 
 '''Обычное меню внизу'''
