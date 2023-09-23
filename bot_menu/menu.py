@@ -128,3 +128,34 @@ def kb_team(pref: str, name_pos: str, *buttons: str) -> InlineKeyboardMarkup:
         callback_data=f'{pref}_{name_pos}_{button}') for button in buttons])
     # Возвращаем объект инлайн-клавиатуры
     return kb_builder.as_markup()
+
+
+'''Клавиатура админа'''
+async def admin_kb():
+    inline_markup: InlineKeyboardBuilder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(
+        text=admin_kb_ru['add_op'],
+        callback_data=admin_kb_ru['add_op']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['del_op'],
+        callback_data=admin_kb_ru['del_op']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['add_mailing_list'],
+        callback_data=admin_kb_ru['add_mailing_list']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['statistics'],
+        callback_data=admin_kb_ru['statistics']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['promo'],
+        callback_data=admin_kb_ru['promo']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['vip'],
+        callback_data=admin_kb_ru['vip']
+    ), InlineKeyboardButton(
+        text=admin_kb_ru['set'],
+        callback_data=admin_kb_ru['set']
+    )
+    ]
+
+    inline_markup.row(*buttons, width=2)
+    return inline_markup.as_markup()

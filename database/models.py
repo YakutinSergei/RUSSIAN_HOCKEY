@@ -11,7 +11,7 @@ async def db_connect():
     try:
         conn = await asyncpg.connect(user=env('user'),  password=env('password'), database=env('db_name'), host=env('host'))
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS users(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS users(id INTEGER NOT NULL PRIMARY KEY,
                                                             tg_id BIGSERIAL,
                                                             user_name VARCHAR(50),
                                                             attempts INTEGER DEFAULT '1',
@@ -19,7 +19,7 @@ async def db_connect():
                                                             points INTEGER DEFAULT '0',
                                                             balance INTEGER DEFAULT '0');''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS team(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS team(id INTEGER NOT NULL PRIMARY KEY,
                                                                 tg_id BIGSERIAL,
                                                                name VARCHAR(50) DEFAULT 'None',
                                                                goalkeeper INTEGER,
@@ -35,7 +35,7 @@ async def db_connect():
                                                                missed_pucks INTEGER DEFAULT '0',
                                                                points INTEGER DEFAULT '0');''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS players(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS players(id INTEGER NOT NULL PRIMARY KEY,
                                                                         img VARCHAR(100),
                                                                         name VARCHAR(50),
                                                                         position VARCHAR(50),
@@ -47,7 +47,7 @@ async def db_connect():
                                                                         sal_price INTEGER,
                                                                         start_player BOOLEAN DEFAULT 'false');''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS goalkeepers(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS goalkeepers(id INTEGER NOT NULL PRIMARY KEY,
                                                                         img VARCHAR(100),
                                                                         name VARCHAR(50),
                                                                         reliability REAL,
@@ -57,19 +57,19 @@ async def db_connect():
                                                                         sal_price INTEGER,
                                                                         start_player BOOLEAN DEFAULT 'false');''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS players_user(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS players_user(id INTEGER NOT NULL PRIMARY KEY,
                                                                             id_user BIGSERIAL,
                                                                             id_players INTEGER,
                                                                             position VARCHAR(50));''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS bets(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS bets(id INTEGER NOT NULL PRIMARY KEY,
                                                                                     num_outcomes INTEGER,
                                                                                     start_data TIMESTAMP,
                                                                                     outcomes INTEGER DEFAULT '0',
                                                                                     team_1 VARCHAR(50),
                                                                                     team_2 VARCHAR(50));''')
 
-        await conn.execute('''CREATE TABLE IF NOT EXISTS bets_players(id BIGSERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS bets_players(id INTEGER NOT NULL PRIMARY KEY,
                                                                             id_bets INTEGER,
                                                                             tg_id BIGSERIAL,
                                                                             outcomes VARCHAR(50));''')

@@ -5,7 +5,7 @@ from aiogram.fsm.state import StatesGroup, State, default_state
 from aiogram.types import Message, CallbackQuery
 
 from bot_menu.menu import create_inline_kb
-from database.orm import add_card_players, add_card_goalkeeper
+from database.orm import add_card_players, add_card_goalkeeper, get_user
 from lexicon.lexicon_ru import MENU, PLAYERS
 
 router: Router = Router()
@@ -33,6 +33,16 @@ class FSMadd_goalkeeper(StatesGroup):
     defense = State()
     pur_price = State()
     sal_price = State()
+
+
+
+
+'''Команда /admin'''
+@router.message(F.text == '/admin')
+async def check_admin(message: Message):
+    user = await get_user(message.from_user.id)
+    if user['admin']:
+        await message.answer(text='Выбери действие', reply_markup=await admin_kb())
 
 
 '''Выбор кого добавить'''

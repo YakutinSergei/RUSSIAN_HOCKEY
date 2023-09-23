@@ -1,14 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, InputMediaPhoto, Message
 
-from bot_menu.menu import create_inline_kb, create_pg_kb_players, main_menu, kb_team, create_pg_choice_players
+from bot_menu.menu import kb_team, create_pg_choice_players
 from create_bot import bot
-from database.orm import get_goalkeeper_page, get_user_players, len_card, get_players_page, get_goalkeeper_next, \
-    get_goalkeeper_previous, get_players_next_page, get_players_previous_page, get_name_commands_id, get_balance, \
-    get_price_card, get_card_user, add_card_user, up_balance_user, card_del_user, get_my_commands, get_players_team, \
+from database.orm import get_my_commands, get_players_team, \
     update_team
 from handlers.players_handlers import caption_players
-from lexicon.lexicon_ru import PLAYERS, PAGE, Attributes_players, Attributes_goalkeepers, Price
+from lexicon.lexicon_ru import PLAYERS, PAGE
 
 router: Router = Router()
 
