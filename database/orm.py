@@ -137,7 +137,10 @@ async def get_name_commands_id(id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        command = await conn.fetchrow(f"SELECT * FROM team WHERE tg_id = {id}")
+        command = await conn.fetchrow(f"SELECT id FROM team "
+                                      f"JOIN users USING (user_id)"
+                                      f"WHERE users.user_id = {id}")
+        return command
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -145,7 +148,6 @@ async def get_name_commands_id(id):
     finally:
         if conn:
             await conn.close()
-            return command
             print('[INFO] PostgresSQL closed')
 
 
@@ -161,9 +163,10 @@ async def get_players(position, user_id):
                                    f"AND NOT EXISTS ("
                                    f"SELECT 1 "
                                    f"FROM players_user "
-                                   f"WHERE players.id = players_user.id_players "
-                                   f"AND players_user.id_user = {user_id}"
+                                   f"WHERE players.player_id = players_user.player_id "
+                                   f"AND players_user.user_id = {user_id}"
                                    f")")
+        return command
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -171,7 +174,7 @@ async def get_players(position, user_id):
     finally:
         if conn:
             await conn.close()
-            return command
+
             print('[INFO] PostgresSQL closed')
 
 
@@ -182,7 +185,7 @@ async def add_card_user(user_id, id_card, pos):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        await conn.execute(f'''INSERT INTO players_user(id_user, id_players, position) 
+        await conn.execute(f'''INSERT INTO players_user(user_id, player_id, position) 
                           VALUES($1, $2, $3)''',
                            user_id, id_card, pos)
 
@@ -202,11 +205,11 @@ async def add_command(new_command, user_id):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
-
-        await conn.execute(f'''INSERT INTO team(tg_id, name, goalkeeper, forward_1, forward_2, forward_3, 
+        #user = await conn.fetchrow(f'''SELECT user_id FROM users WHERE tg_id = {user_id}''')
+        await conn.execute(f'''INSERT INTO team(user_id, name, goalkeeper, forward_1, forward_2, forward_3, 
                                                 defender_1, defender_2) 
-                          VALUES($1, $2, $3, $4, $5, $6, $7, $8)''',
-                           user_id, new_command['name'], new_command['goalkeepers'], new_command['forward_1'],
+                          VALUES((SELECT user_id FROM users WHERE tg_id = {user_id}), $1, $2, $3, $4, $5, $6, $7)''',
+                           new_command['name'], new_command['goalkeepers'], new_command['forward_1'],
                            new_command['forward_2'], new_command['forward_3'], new_command['defender_1'],
                            new_command['defender_2'])
 
@@ -251,11 +254,20 @@ async def get_my_commands(tg_id):
                                      host=env('host'))
 
         command = []
-        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
+        teams = await conn.fetch('''SELECT team.name as t_name, goalkeepers.goalkeeper_id, goalkeepers.img, goalkeepers.name, 
+                                            goalkeepers.reliability, goalkeepers.endurance, goalkeepers.defense, 
+                                            players.id, players.img, players.name, players.attack, 
+                                            players.endurance, players.power, players.defense,
+                                    FROM team
+        '''
+
+        )
+
+        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.goalkeeper_id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
                                       f"goalkeepers.endurance, goalkeepers.defense "
                                       f"FROM team "
                                       f"JOIN goalkeepers "
-                                      f"ON team.goalkeeper = goalkeepers.id AND team.tg_id = {tg_id};")
+                                      f"ON team.goalkeeper = goalkeepers.goalkeeper_id AND team.tg_id = {tg_id};")
         command.append(goalkeeper)
 
         for i in range(3):
@@ -372,7 +384,7 @@ async def get_user_players(user_id, category):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        card = await conn.fetch(f"SELECT id_players FROM players_user WHERE position = '{category}' AND id_user = {user_id}")
+        card = await conn.fetch(f"SELECT player_id FROM players_user WHERE position = '{category}' AND user_id = {user_id}")
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -595,7 +607,7 @@ async def card_del_user(tg_id, category, id_card):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        await conn.fetchrow(f"DELETE FROM players_user WHERE id_user = {tg_id} AND id_players = {id_card} AND position = '{category}'")
+        await conn.fetchrow(f"DELETE FROM players_user WHERE user_id = {tg_id} AND player_id = {id_card} AND position = '{category}'")
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -617,31 +629,31 @@ async def get_players_team(tg_id, category):
                                         f"players.endurance, players.power, players.defense "
                                        f"FROM players_user "
                                        f"JOIN players "
-                                       f"ON players_user.id_players = players.id "
-                                       f"AND players_user.id_user = {tg_id} "
+                                       f"ON players_user.player_id = players.id "
+                                       f"AND players_user.user_id = {tg_id} "
                                        f"AND players_user.position = '{PLAYERS['defender']}' "
-                                       f"AND players_user.id_players != {pl_def['defender_1']} "
-                                       f"AND players_user.id_players != {pl_def['defender_2']};")
+                                       f"AND players_user.player_id != {pl_def['defender_1']} "
+                                       f"AND players_user.player_id != {pl_def['defender_2']};")
         elif category == PLAYERS['forward']:
             players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
                                        f"players.endurance, players.power, players.defense "
                                         f"FROM players_user "
                                         f"JOIN players "
-                                        f"ON players_user.id_players = players.id "
-                                       f"AND players_user.id_user = {tg_id} "
+                                        f"ON players_user.player_id = players.id "
+                                       f"AND players_user.user_id = {tg_id} "
                                        f"AND players_user.position = '{PLAYERS['forward']}' "
-                                       f"AND players_user.id_players != {pl_def['forward_1']} "
-                                       f"AND players_user.id_players != {pl_def['forward_2']} "
-                                       f"AND players_user.id_players != {pl_def['forward_3']};")
+                                       f"AND players_user.player_id != {pl_def['forward_1']} "
+                                       f"AND players_user.player_id != {pl_def['forward_2']} "
+                                       f"AND players_user.player_id != {pl_def['forward_3']};")
         else:
             players = await conn.fetch(f"SELECT goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
                                         f"goalkeepers.endurance, goalkeepers.defense "
                                         f"FROM players_user "
                                         f"JOIN goalkeepers "
-                                        f"ON players_user.id_players = goalkeepers.id "
-                                       f"AND players_user.id_user = {tg_id} "
+                                        f"ON players_user.player_id = goalkeepers.id "
+                                       f"AND players_user.user_id = {tg_id} "
                                         f"AND players_user.position = '{PLAYERS['goalkeeper']}' "
-                                       f"AND players_user.id_players != {pl_def['goalkeeper']};")
+                                       f"AND players_user.player_id != {pl_def['goalkeeper']};")
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)

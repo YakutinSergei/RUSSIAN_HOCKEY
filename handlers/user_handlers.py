@@ -20,8 +20,8 @@ router: Router = Router()
 
 @router.message(CommandStart())
 async def process_start_command(message: Message, state: FSMContext):
-    users = await get_user(message.from_user.id)
-    commands = await get_name_commands_id(message.from_user.id)
+    users = await get_user(message.from_user.id) #Данные о пользователи
+    commands = await get_name_commands_id(message.from_user.id) # Данные о команде
     if users and commands:
         if users['admin']:
             await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!',
@@ -102,7 +102,6 @@ async def menu_commands(message: Message):
 
 
 '''Получение атаки'''
-
 
 async def get_indicators(my_commands: list):
     attack = 0

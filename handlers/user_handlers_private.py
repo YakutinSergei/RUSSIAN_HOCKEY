@@ -43,11 +43,7 @@ async def process_start_command(message: Message, state: FSMContext):
     users = await get_user(message.from_user.id)
     commands = await get_name_commands_id(message.from_user.id)
     if users and commands:
-        if users['admin']:
-            await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!',
-                                 reply_markup=menu_admin)
-        else:
-            await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!',
+        await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!',
                                  reply_markup=menu_user_private)
     else:
         await add_users(message.from_user.id, message.from_user.username)
@@ -94,8 +90,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
     pg = pg['page']
     if q.split(':')[-1] == 'goalkeepers':
         goalkeepers = await get_goalkeepers()
-        await state.update_data(goalkeepers=goalkeepers[pg]['id'])
-        await add_card_user(callback.from_user.id, goalkeepers[pg]['id'], PLAYERS['goalkeeper'])
+        await state.update_data(goalkeepers=goalkeepers[pg]['goalkeeper_id'])
+        await add_card_user(callback.from_user.id, goalkeepers[pg]['goalkeeper_id'], PLAYERS['goalkeeper'])
         await state.update_data(page=0)
         pg = await state.get_data()
         pg = pg['page']
@@ -109,8 +105,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
                                                                        'forward'))
     elif q.split(':')[-1] == 'forward_1':
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
-        await add_card_user(callback.from_user.id, players[pg]['id'], PLAYERS['forward'])
-        await state.update_data(forward_1=players[pg]['id'])
+        await add_card_user(callback.from_user.id, players[pg]['player_id'], PLAYERS['forward'])
+        await state.update_data(forward_1=players[pg]['player_id'])
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
         await state.update_data(page=0)
         pg = await state.get_data()
@@ -124,8 +120,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
                                                                        'forward'))
     elif q.split(':')[-1] == 'forward_2':
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
-        await add_card_user(callback.from_user.id, players[pg]['id'], PLAYERS['forward'])
-        await state.update_data(forward_2=players[pg]['id'])
+        await add_card_user(callback.from_user.id, players[pg]['player_id'], PLAYERS['forward'])
+        await state.update_data(forward_2=players[pg]['player_id'])
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
         await state.update_data(page=0)
         pg = await state.get_data()
@@ -139,8 +135,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         await state.set_state(FSMname_command.forward_3)
     elif q.split(':')[-1] == 'forward_3':
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
-        await add_card_user(callback.from_user.id, players[pg]['id'], PLAYERS['forward'])
-        await state.update_data(forward_3=players[pg]['id'])
+        await add_card_user(callback.from_user.id, players[pg]['player_id'], PLAYERS['forward'])
+        await state.update_data(forward_3=players[pg]['player_id'])
         players = await get_players(PLAYERS['defender'], callback.from_user.id)
         await state.update_data(page=0)
         pg = await state.get_data()
@@ -154,8 +150,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         await state.set_state(FSMname_command.defender_1)
     elif q.split(':')[-1] == 'defender_1':
         players = await get_players(PLAYERS['defender'], callback.from_user.id)
-        await add_card_user(callback.from_user.id, players[pg]['id'], PLAYERS['defender'])
-        await state.update_data(defender_1=players[pg]['id'])
+        await add_card_user(callback.from_user.id, players[pg]['player_id'], PLAYERS['defender'])
+        await state.update_data(defender_1=players[pg]['player_id'])
         players = await get_players(PLAYERS['defender'], callback.from_user.id)
         await state.update_data(page=0)
         pg = await state.get_data()
@@ -169,8 +165,8 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         await state.set_state(FSMname_command.defender_2)
     else:
         players = await get_players(PLAYERS['defender'], callback.from_user.id)
-        await add_card_user(callback.from_user.id, players[pg]['id'], PLAYERS['defender'])
-        await state.update_data(defender_2=players[pg]['id'])
+        await add_card_user(callback.from_user.id, players[pg]['player_id'], PLAYERS['defender'])
+        await state.update_data(defender_2=players[pg]['player_id'])
         new_commands = await state.get_data()
         await add_command(new_commands, callback.from_user.id)
         await state.clear()
