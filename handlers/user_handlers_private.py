@@ -46,7 +46,8 @@ async def process_start_command(message: Message, state: FSMContext):
         await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!',
                                  reply_markup=menu_user_private)
     else:
-        await add_users(message.from_user.id, message.from_user.username)
+        if not users:
+            await add_users(message.from_user.id, message.from_user.username)
         await message.answer(text=f'🤝Приветствую тебя, {message.from_user.username}!\n'
                                   '🥅Давай придумаем название, которое будет идеально подходить для '
                                   'твоей хоккейной команды и вызывать восхищение у фанатов.')

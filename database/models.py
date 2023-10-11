@@ -71,7 +71,7 @@ async def db_connect():
         #start_data - Начало матча
         #outcomes - результат
         #team_1 team_2 - команды
-        await conn.execute('''CREATE TABLE IF NOT EXISTS bets(bets_id SERIAL NOT NULL PRIMARY KEY,
+        await conn.execute('''CREATE TABLE IF NOT EXISTS bets(bets_id BIGSERIAL NOT NULL PRIMARY KEY,
                                                                 num_outcomes INTEGER,
                                                                 start_data TIMESTAMP,
                                                                 outcomes INTEGER DEFAULT '0',

@@ -16,14 +16,14 @@ async def get_user(id):
                                      host=env('host'))
 
         users = await conn.fetchrow(f"SELECT * FROM users WHERE tg_id = '{id}'")
-
+        return users
     except Exception as _ex:
         print('[INFO] Error ', _ex)
 
     finally:
         if conn:
             await conn.close()
-            return users
+
             print('[INFO] PostgresSQL closed')
 
 
@@ -157,15 +157,25 @@ async def get_players(position, user_id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        command = await conn.fetch(f"SELECT *"
-                                   f"FROM players "
-                                   f"WHERE players.position = '{position}' AND players.start_player = 'true' "
-                                   f"AND NOT EXISTS ("
-                                   f"SELECT 1 "
-                                   f"FROM players_user "
-                                   f"WHERE players.player_id = players_user.player_id "
-                                   f"AND players_user.user_id = {user_id}"
-                                   f")")
+        command = await conn.fetch(f'''
+                                        SELECT *
+                                        FROM players
+                                        WHERE position = '{position}' -- замените 'нападающий' на желаемую позицию
+                                            AND start_player = 'true'
+                                            AND NOT EXISTS (
+                                                SELECT 1
+                                                FROM players_user
+                                                WHERE players_user.player_id = players.player_id
+                                                    AND players_user.user_id = (
+                                                        SELECT user_id
+                                                        FROM users
+                                                        WHERE tg_id = {user_id} -- замените 'ваш_tg_id' на желаемый tg_id пользователя
+                                                    )
+                                                    AND players_user.position = '{position}'
+                                            )
+        ''')
+
+        print(command)
         return command
 
     except Exception as _ex:
@@ -186,7 +196,11 @@ async def add_card_user(user_id, id_card, pos):
                                      host=env('host'))
 
         await conn.execute(f'''INSERT INTO players_user(user_id, player_id, position) 
-                          VALUES($1, $2, $3)''',
+                                VALUES (
+                                    (SELECT user_id FROM users WHERE tg_id = $1),
+                                    $2,
+                                    $3
+                                )''',
                            user_id, id_card, pos)
 
     except Exception as _ex:
@@ -206,7 +220,7 @@ async def add_command(new_command, user_id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
         #user = await conn.fetchrow(f'''SELECT user_id FROM users WHERE tg_id = {user_id}''')
-        await conn.execute(f'''INSERT INTO team(user_id, name, goalkeeper, forward_1, forward_2, forward_3, 
+        await conn.execute(f'''INSERT INTO team(user_id, name, goalkeeper_id, forward_1, forward_2, forward_3, 
                                                 defender_1, defender_2) 
                           VALUES((SELECT user_id FROM users WHERE tg_id = {user_id}), $1, $2, $3, $4, $5, $6, $7)''',
                            new_command['name'], new_command['goalkeepers'], new_command['forward_1'],
