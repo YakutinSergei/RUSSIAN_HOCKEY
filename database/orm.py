@@ -380,12 +380,17 @@ async def get_players_page(category):
 
 
 '''Получение игроков пользователя'''
-async def get_user_players(user_id, category):
+async def get_user_players(tg_id, category):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        card = await conn.fetch(f"SELECT player_id FROM players_user WHERE position = '{category}' AND user_id = {user_id}")
+        card = await conn.fetch(f'''SELECT player_id 
+                                    FROM players_user 
+                                    JOIN users USING (user_id)
+                                    WHERE players_user.position = '{category}' AND user.tg_id = {tg_id}''')
+        return card
+
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -393,7 +398,6 @@ async def get_user_players(user_id, category):
     finally:
         if conn:
             await conn.close()
-            return card
             print('[INFO] PostgresSQL closed')
 
 
@@ -409,8 +413,8 @@ async def len_card(id, category):
             pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM goalkeepers WHERE id <= {id}")
         else:
             count_len = await conn.fetchrow(f"SELECT count(*) FROM players WHERE position = '{category}'")
-            pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM players WHERE id <= {id} AND position = '{category}'")
-
+            pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM players WHERE player_id <= {id} AND position = '{category}'")
+            return count_len, pg
 
 
     except Exception as _ex:
@@ -419,7 +423,7 @@ async def len_card(id, category):
     finally:
         if conn:
             await conn.close()
-            return count_len, pg
+
             print('[INFO] PostgresSQL closed')
 
 

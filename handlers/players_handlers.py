@@ -54,9 +54,9 @@ async def choice_player(callback: CallbackQuery):
         players = await get_players_page(callback.data.split('_')[-1])
         user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[-1])
         price = f"{Price['buy']}: {players['pur_price']}"
-        len_pl = await len_card(players['id'], callback.data.split('_')[-1])
+        len_pl = await len_card(players['player_id'], callback.data.split('_')[-1])
         for i in range(len(user_players)):
-            if user_players[i]['id_players'] == players['id']:
+            if user_players[i]['player_id'] == players['id']:
                 price = f"{Price['sell']}: {players['sal_price']}"
         await bot.send_photo(chat_id=callback.from_user.id,
                              photo=players['img'],

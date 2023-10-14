@@ -72,7 +72,6 @@ async def add_name_command(message: Message, state: FSMContext):
                                   'трех нападающих⚡️ и двух защитников🛡️')
         await bot.send_photo(chat_id=message.from_user.id,
                              photo=goalkeepers[pg]['img'],
-                             caption=caption_players(0, pg, goalkeepers),
                              reply_markup=create_pg_kb_command('goalkeepers',
                                                                'backward', f'{pg + 1} / {len(goalkeepers)}', 'forward'))
     else:
@@ -99,8 +98,7 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         await state.set_state(FSMname_command.forward_1)
         players = await get_players(PLAYERS['forward'], callback.from_user.id)
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=players[pg]['img'],
-                                                           caption=caption_players(1, pg, players)),
+                                     media=InputMediaPhoto(media=players[pg]['img']),
                                      reply_markup=create_pg_kb_command(PLAYERS['forward'], 'backward',
                                                                        f'{pg + 1} / {len(players)}',
                                                                        'forward'))
@@ -114,8 +112,7 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         pg = pg['page']
         await state.set_state(FSMname_command.forward_2)
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=players[pg]['img'],
-                                                           caption=caption_players(1, pg, players)),
+                                     media=InputMediaPhoto(media=players[pg]['img']),
                                      reply_markup=create_pg_kb_command(PLAYERS['forward'], 'backward',
                                                                        f'{pg + 1} / {len(players)}',
                                                                        'forward'))
@@ -128,8 +125,7 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         pg = await state.get_data()
         pg = pg['page']
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=players[pg]['img'],
-                                                           caption=caption_players(1, pg, players)),
+                                     media=InputMediaPhoto(media=players[pg]['img']),
                                      reply_markup=create_pg_kb_command(PLAYERS['forward'], 'backward',
                                                                        f'{pg + 1} / {len(players)}',
                                                                        'forward'))
@@ -143,8 +139,7 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         pg = await state.get_data()
         pg = pg['page']
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=players[pg]['img'],
-                                                           caption=caption_players(1, pg, players)),
+                                     media=InputMediaPhoto(media=players[pg]['img']),
                                      reply_markup=create_pg_kb_command(PLAYERS['defender'], 'backward',
                                                                        f'{pg + 1} / {len(players)}',
                                                                        'forward'))
@@ -158,8 +153,7 @@ async def choice_player(callback: CallbackQuery, state: FSMContext):
         pg = await state.get_data()
         pg = pg['page']
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=players[pg]['img'],
-                                                           caption=caption_players(1, pg, players)),
+                                     media=InputMediaPhoto(media=players[pg]['img']),
                                      reply_markup=create_pg_kb_command(PLAYERS['defender'], 'backward',
                                                                        f'{pg + 1} / {len(players)}',
                                                                        'forward'))
@@ -191,8 +185,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg + 1)
             pg += 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=goalkeepers[pg]['img'],
-                                                               caption=caption_players(0, pg, goalkeepers)),
+                                         media=InputMediaPhoto(media=goalkeepers[pg]['img']),
                                          reply_markup=create_pg_kb_command('goalkeepers', 'backward',
                                                                            f'{pg + 1} / {len(goalkeepers)}',
                                                                            'forward'))
@@ -204,8 +197,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg + 1)
             pg += 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=players[pg]['img'],
-                                                               caption=caption_players(1, pg, players)),
+                                         media=InputMediaPhoto(media=players[pg]['img']),
                                          reply_markup=create_pg_kb_command(PLAYERS['forward'], 'backward',
                                                                            f'{pg + 1} / {len(players)}',
                                                                            'forward'))
@@ -217,8 +209,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg + 1)
             pg += 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=players[pg]['img'],
-                                                               caption=caption_players(1, pg, players)),
+                                         media=InputMediaPhoto(media=players[pg]['img']),
                                          reply_markup=create_pg_kb_command(PLAYERS['defender'], 'backward',
                                                                            f'{pg + 1} / {len(players)}',
                                                                            'forward'))
@@ -238,8 +229,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg - 1)
             pg -= 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=goalkeepers[pg]['img'],
-                                                               caption=caption_players(0, pg, goalkeepers)),
+                                         media=InputMediaPhoto(media=goalkeepers[pg]['img']),
                                          reply_markup=create_pg_kb_command('goalkeepers', 'backward',
                                                                            f'{pg + 1} / {len(goalkeepers)}',
                                                                            'forward'))
@@ -251,8 +241,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg - 1)
             pg -= 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=players[pg]['img'],
-                                                               caption=caption_players(1, pg, players)),
+                                         media=InputMediaPhoto(media=players[pg]['img']),
                                          reply_markup=create_pg_kb_command(PLAYERS['forward'], 'backward',
                                                                            f'{pg + 1} / {len(players)}',
                                                                            'forward'))
@@ -264,8 +253,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
             await state.update_data(page=pg - 1)
             pg -= 1
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=players[pg]['img'],
-                                                               caption=caption_players(1, pg, players)),
+                                         media=InputMediaPhoto(media=players[pg]['img']),
                                          reply_markup=create_pg_kb_command(PLAYERS['defender'], 'backward',
                                                                            f'{pg + 1} / {len(players)}',
                                                                            'forward'))
@@ -275,19 +263,7 @@ async def forward_command(callback: CallbackQuery, state: FSMContext):
 '''Функция вывода информации о игроке'''
 
 
-def caption_players(N, pg, player):
-    if N:
-        text = f'👤{player[pg]["name"]}\n' \
-               f'{Attributes_players["attack"]}: {player[pg]["attack"]}\n' \
-               f'{Attributes_players["endurance"]}: {player[pg]["endurance"]}\n' \
-               f'{Attributes_players["power"]}: {player[pg]["power"]}\n' \
-               f'{Attributes_players["defense"]}: {player[pg]["defense"]}'
-    else:
-        text = f'👤{player[pg]["name"]}\n' \
-               f'{Attributes_goalkeepers["reliability"]}:{"{:.1f}".format(player[pg]["reliability"])}\n' \
-               f'{Attributes_goalkeepers["endurance"]}: {player[pg]["endurance"]}\n' \
-               f'{Attributes_goalkeepers["defense"]}: {player[pg]["defense"]}'
-    return text
+
 
 
 '''Кнопка меню'''
