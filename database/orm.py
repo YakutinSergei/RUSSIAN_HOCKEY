@@ -132,14 +132,15 @@ async def get_name_commands(name):
 
 '''Проверка существует ли команда'''
 
-async def get_name_commands_id(id):
+async def get_name_commands_id(tg_id):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        command = await conn.fetchrow(f"SELECT id FROM team "
+        command = await conn.fetchrow(f"SELECT * "
+                                      f"FROM team "
                                       f"JOIN users USING (user_id)"
-                                      f"WHERE users.user_id = {id}")
+                                      f"WHERE users.tg_id = {tg_id}")
         return command
 
     except Exception as _ex:
@@ -267,38 +268,25 @@ async def get_my_commands(tg_id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        command = []
-        teams = await conn.fetch('''SELECT team.name as t_name, goalkeepers.goalkeeper_id, goalkeepers.img, goalkeepers.name, 
-                                            goalkeepers.reliability, goalkeepers.endurance, goalkeepers.defense, 
-                                            players.id, players.img, players.name, players.attack, 
-                                            players.endurance, players.power, players.defense,
+
+        teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, 
+                                            team.pucks_scored, team.missed_pucks, team.points, 
+                                            g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
+                                            g.endurance AS g_endurance, g.defense AS g_defense, g.pur_price AS g_pur_price,
+                                            g.sal_price AS g_sal_price, p.img AS p_img, p.name AS p_name, p.position AS p_position,
+                                            p.attack AS p_attack, p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
+                                            p.pur_price AS p_pur_price, p.sal_price AS p_sal_price 
                                     FROM team
-        '''
-
-        )
-
-        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.goalkeeper_id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
-                                      f"goalkeepers.endurance, goalkeepers.defense "
-                                      f"FROM team "
-                                      f"JOIN goalkeepers "
-                                      f"ON team.goalkeeper = goalkeepers.goalkeeper_id AND team.tg_id = {tg_id};")
-        command.append(goalkeeper)
-
-        for i in range(3):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.id, players.img, players.name, players.attack, "
-                                          f"players.endurance, players.power, players.defense "
-                                          f"FROM team "
-                                          f"JOIN players "
-                                          f"ON team.forward_{i+1} = players.id AND team.tg_id = {tg_id};")
-            command.append(forward)
-
-        for i in range(2):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.id, players.img, players.name, players.attack, "
-                                          f"players.endurance, players.power, players.defense "
-                                          f"FROM team "
-                                          f"JOIN players "
-                                          f"ON team.defender_{i+1} = players.id AND team.tg_id = {tg_id};")
-            command.append(forward)
+                                    JOIN goalkeepers g USING (goalkeeper_id)
+                                    JOIN players p ON team.forward_1 = player_id 
+                                                    OR team.forward_2 = player_id
+                                                    OR team.forward_3 = player_id
+                                                    OR team.defender_1 = player_id
+                                                    OR team.defender_2 = player_id
+                                    JOIN users USING (user_id)
+                                    WHERE users.tg_id = {tg_id}
+        ''')
+        return teams
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -306,7 +294,6 @@ async def get_my_commands(tg_id):
     finally:
         if conn:
             await conn.close()
-            return command
             print('[INFO] PostgresSQL closed')
 
 '''Команда противника'''

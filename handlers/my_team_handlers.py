@@ -16,9 +16,10 @@ router: Router = Router()
 async def choice_menu(callback: CallbackQuery):
     pg = 0
     my_commands = await get_my_commands(callback.from_user.id)
+    print(my_commands)
     await bot.send_photo(chat_id=callback.from_user.id,
-                         photo=my_commands[pg]['img'],
-                         caption=f'🌟<b><u>{my_commands[pg]["t_name"]}</u></b>🌟\n'
+                         photo=my_commands[pg]['g_img'],
+                         caption=f'🌟<b><u>{my_commands[pg]["name"]}</u></b>🌟\n'
                                  +caption_players(0, my_commands[pg]),
                          reply_markup=kb_team(
                              f"my_team_{pg}", PLAYERS['goalkeeper'],
@@ -32,22 +33,28 @@ async def my_team_page(callback: CallbackQuery):
     my_commands = await get_my_commands(callback.from_user.id)
     if callback.data.split("_")[-1] == 'forward':
         pg = int(callback.data.split("_")[2])
-        if pg+1 < len(my_commands):
+        if pg+1 <= len(my_commands):
             pg += 1
             if pg > 3:
+                pg_b = pg -1
                 N = 1
                 pos = PLAYERS['defender']
+                img = my_commands[pg_b]['p_img']
             elif pg > 0:
+                pg_b = pg -1
                 N = 1
                 pos = PLAYERS['forward']
+                img = my_commands[pg_b]['p_img']
             else:
+                pg_b = 0
                 N = 0
                 pos = PLAYERS['goalkeeper']
+                img = my_commands[pg_b]['g_img']
 
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=my_commands[pg]['img'],
-                                                               caption=f'🌟<b><u>{my_commands[pg]["t_name"]}</u></b>🌟\n'
-                                                                        + caption_players(N, my_commands[pg])),
+                                         media=InputMediaPhoto(media=img,
+                                                               caption=f'🌟<b><u>{my_commands[pg_b]["name"]}</u></b>🌟\n'
+                                                                        + caption_players(N, my_commands[pg_b])),
                                          reply_markup=kb_team(f"my_team_{pg}", pos,
                                                              'backward', PAGE['replace'], 'forward'))
 
@@ -56,18 +63,24 @@ async def my_team_page(callback: CallbackQuery):
         if pg > 0:
             pg -= 1
             if pg > 3:
+                pg_b = pg -1
                 N = 1
                 pos = PLAYERS['defender']
+                img = my_commands[pg_b]['p_img']
             elif pg > 0:
+                pg_b = pg -1
                 N = 1
                 pos = PLAYERS['forward']
+                img = my_commands[pg_b]['p_img']
             else:
+                pg_b = 0
                 N = 0
                 pos = PLAYERS['goalkeeper']
+                img = my_commands[pg_b]['g_img']
             await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                         media=InputMediaPhoto(media=my_commands[pg]['img'],
-                                                               caption=f'🌟<b><u>{my_commands[pg]["t_name"]}</u></b>🌟\n'
-                                                                       + caption_players(N, my_commands[pg])),
+                                         media=InputMediaPhoto(media=img,
+                                                               caption=f'🌟<b><u>{my_commands[pg_b]["name"]}</u></b>🌟\n'
+                                                                       + caption_players(N, my_commands[pg_b])),
                                          reply_markup=kb_team(f"my_team_{pg}", pos,
                                                               'backward', PAGE['replace'], 'forward'))
     elif callback.data.split("_")[-1] == PAGE['replace']:
