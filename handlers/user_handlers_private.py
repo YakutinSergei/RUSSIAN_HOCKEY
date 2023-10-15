@@ -55,8 +55,6 @@ async def process_start_command(message: Message, state: FSMContext):
 
 
 '''Ввод названия команды'''
-
-
 @router.message(StateFilter(FSMname_command.name))
 async def add_name_command(message: Message, state: FSMContext):
     commands = await get_name_commands(message.text)
@@ -81,7 +79,6 @@ async def add_name_command(message: Message, state: FSMContext):
 
 
 '''Выбор карточки'''
-
 
 @router.callback_query(F.data == 'choice_player')
 async def choice_player(callback: CallbackQuery, state: FSMContext):
