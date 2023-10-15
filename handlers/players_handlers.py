@@ -141,15 +141,15 @@ async def price_card(callback: CallbackQuery):
     if callback.data.split('_')[1] == Price['buy']:
         #Проверяем что нет такой карты у вас
         card_availability = await card_ava(my_tg_id, category, id_card, 1)
-        balance_user = await get_balance(callback.from_user.id)
-        price_players = await get_price_card(callback.data.split('_')[2], callback.data.split('_')[-1], 1)
-        if balance_user['balance'] > price_players['pur_price']:
+
+        if card_availability == 1:
             await callback.answer("Поздравляю с приобретением", show_alert=True)
             await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-            await add_card_user(callback.from_user.id, int(callback.data.split('_')[-1]), callback.data.split('_')[2], )
-            await up_balance_user(callback.from_user.id, -(price_players['pur_price']))
-        else:
+        elif card_availability == 2:
             await callback.answer("К сожалению Вам не хватает средств для покупки", show_alert=True)
+        else:
+            await callback.answer("Такая карта у вас уже есть", show_alert=True)
+
     else:
         players = await get_card_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
         price_players = await get_price_card(callback.data.split('_')[2], int(callback.data.split('_')[-1]), 0)
