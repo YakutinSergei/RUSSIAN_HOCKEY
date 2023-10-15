@@ -53,12 +53,12 @@ async def choice_player(callback: CallbackQuery):
         price = f"{Price['buy']}: {players['pur_price']}"
         len_pl = await len_card(players['player_id'], callback.data.split('_')[-1])
         for i in range(len(user_players)):
-            if user_players[i]['player_id'] == players['id']:
+            if user_players[i]['player_id'] == players['player_id']:
                 price = f"{Price['sell']}: {players['sal_price']}"
         await bot.send_photo(chat_id=callback.from_user.id,
                              photo=players['img'],
                              reply_markup=create_pg_kb_players(
-                                 f"pg_card_{callback.data.split('_')[-1]}_{players['id']}", price,
+                                 f"pg_card_{callback.data.split('_')[-1]}_{players['player_id']}", price,
                                  'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}', 'forward'))
     await callback.answer()
 
@@ -68,7 +68,6 @@ async def choice_player(callback: CallbackQuery):
 async def paging_card(callback: CallbackQuery):
     if callback.data.split('_')[-1] == 'forward':
         if callback.data.split('_')[2] == PLAYERS['goalkeeper']:
-            print(callback.data.split('_')[-2])
             goalkeeper = await get_goalkeeper_next(int(callback.data.split('_')[-2]))
             if goalkeeper:
                 user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
