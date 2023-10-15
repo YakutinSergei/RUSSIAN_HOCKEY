@@ -28,7 +28,9 @@ async def choice_player(callback: CallbackQuery):
 async def choice_player(callback: CallbackQuery):
     if callback.data.split('_')[-1] == PLAYERS['goalkeeper']:
         goalkeeper = await get_goalkeeper_page()
+        print(goalkeeper)
         user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[-1])
+        print(user_goalkeeper)
         price = f"{Price['buy']}: {goalkeeper['pur_price']}"
         len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
         for i in range(len(user_goalkeeper)):

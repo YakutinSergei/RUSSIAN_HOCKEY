@@ -353,6 +353,7 @@ async def get_goalkeeper_page():
                                      host=env('host'))
 
         goalkeeper = await conn.fetchrow(f"SELECT * FROM goalkeepers")
+        return goalkeeper
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -360,7 +361,7 @@ async def get_goalkeeper_page():
     finally:
         if conn:
             await conn.close()
-            return goalkeeper
+
             print('[INFO] PostgresSQL closed')
 
 
@@ -391,7 +392,7 @@ async def get_user_players(tg_id, category):
 
         card = await conn.fetch(f'''SELECT player_id 
                                     FROM players_user 
-                                    JOIN users USING (user_id)
+                                    JOIN users USING (user_id) 
                                     WHERE players_user.position = '{category}' AND user.tg_id = {tg_id}''')
         return card
 
