@@ -26,14 +26,13 @@ async def choice_player(callback: CallbackQuery):
 '''Выбор позиции для отображения'''
 @router.callback_query(F.data.startswith('ch_pl_'))
 async def choice_player(callback: CallbackQuery):
-    pg = 1
     if callback.data.split('_')[-1] == PLAYERS['goalkeeper']:
         goalkeeper = await get_goalkeeper_page()
         user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[-1])
         price = f"{Price['buy']}: {goalkeeper['pur_price']}"
-        len_pl = await len_card(goalkeeper['id'], PLAYERS['goalkeeper'])
+        len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
         for i in range(len(user_goalkeeper)):
-            if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
+            if user_goalkeeper[i]['player_id'] == goalkeeper['goalkeeper_id']:
                 price = f"{Price['sell']}: {goalkeeper['sal_price']}"
 
         await bot.send_photo(chat_id=callback.from_user.id,

@@ -44,7 +44,7 @@ async def db_connect():
         await conn.execute('''CREATE TABLE IF NOT EXISTS team(id SERIAL NOT NULL PRIMARY KEY,
                                                                 user_id INTEGER REFERENCES users(user_id),
                                                                name VARCHAR(50) DEFAULT 'None',
-                                                               goalkeeper INTEGER REFERENCES goalkeepers(goalkeeper_id) NOT NULL,
+                                                               goalkeeper_id INTEGER REFERENCES goalkeepers(goalkeeper_id) NOT NULL,
                                                                forward_1 INTEGER REFERENCES players(player_id) NOT NULL,
                                                                forward_2 INTEGER REFERENCES players(player_id) NOT NULL,
                                                                forward_3 INTEGER REFERENCES players(player_id) NOT NULL,
