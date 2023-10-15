@@ -445,16 +445,16 @@ async def get_goalkeeper_next(id):
                                          f"WHERE EXISTS ("
                                          f"SELECT 1 "
                                          f"FROM goalkeepers "
-                                         f"WHERE id = {id}) AND id > {id} "
+                                         f"WHERE goalkeeper_id = {id}) AND goalkeeper_id > {id} "
                                          f"ORDER BY id LIMIT 1")
-
+        return goalkeeper
     except Exception as _ex:
         print('[INFO] Error ', _ex)
 
     finally:
         if conn:
             await conn.close()
-            return goalkeeper
+
             print('[INFO] PostgresSQL closed')
 
 '''Вперед нападающий и защитник'''
@@ -467,7 +467,7 @@ async def get_players_next_page(id, category):
                                          f"WHERE EXISTS ("
                                          f"SELECT 1 "
                                          f"FROM players "
-                                         f"WHERE position = '{category}' AND id = {id}) AND id > {id} "
+                                         f"WHERE position = '{category}' AND player_id = {id}) AND player_id > {id} "
                                          f"ORDER BY id LIMIT 1")
 
     except Exception as _ex:

@@ -68,6 +68,7 @@ async def choice_player(callback: CallbackQuery):
 async def paging_card(callback: CallbackQuery):
     if callback.data.split('_')[-1] == 'forward':
         if callback.data.split('_')[2] == PLAYERS['goalkeeper']:
+            print(callback.data.split('_')[-2])
             goalkeeper = await get_goalkeeper_next(int(callback.data.split('_')[-2]))
             if goalkeeper:
                 user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
