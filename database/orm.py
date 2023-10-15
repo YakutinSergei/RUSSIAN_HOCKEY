@@ -725,13 +725,13 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                 FROM players_user
                                                 WHERE position = '{category}' 
                                                         AND player_id = {id} 
-                                                        AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                                   
+                                                        AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
                                                  ''')
             if availability:
+                print('тут')
                 if Q:
                     return 0
                 else:
-                    print('zzzzz')
                     bay_card = await conn.fetchrow('''
                         SELECT EXISTS (
                             SELECT 1
