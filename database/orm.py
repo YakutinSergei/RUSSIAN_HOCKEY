@@ -415,11 +415,11 @@ async def len_card(id, category):
 
         if category == PLAYERS['goalkeeper']:
             count_len = await conn.fetchrow("SELECT count(*) FROM goalkeepers")
-            pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM goalkeepers WHERE id <= {id}")
+            pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM goalkeepers WHERE goalkeeper_id <= {id}")
         else:
             count_len = await conn.fetchrow(f"SELECT count(*) FROM players WHERE position = '{category}'")
             pg = await conn.fetchrow(f"SELECT count(*) as row_number FROM players WHERE player_id <= {id} AND position = '{category}'")
-            return count_len, pg
+        return count_len, pg
 
 
     except Exception as _ex:
