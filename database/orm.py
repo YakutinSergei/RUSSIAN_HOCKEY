@@ -733,7 +733,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                 else:
                     bay_card = await conn.fetchrow(f'''
                         SELECT EXISTS (
-                            SELECT 1
+                            SELECT *
                             FROM users, goalkeepers
                             WHERE (SELECT balance FROM users WHERE tg_id = {tg_id}) > 
                                 (SELECT pur_price FROM goalkeepers WHERE goalkeeper_id = {id})
