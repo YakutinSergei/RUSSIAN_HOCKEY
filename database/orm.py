@@ -728,45 +728,49 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
                                                  ''')
             if availability:
-                print('тут')
                 if Q:
                     return 0
                 else:
+                    if Q:
+                        await conn.fetchrow(f'''UPDATE users 
+                                                SET balance = balance + (SELECT pur_price 
+                                                                        FROM goalkeepers 
+                                                                        WHERE goalkeeper_id = {id}) 
+                                                WHERE tg_id = {tg_id};
+
+                                                DELETE FROM players_user
+                                                WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
+                                                    AND player_id = {id} AND position = '{category}'
+                                                    ''')
+                        return 1
+                    else:
+                        return 0
+            else:
+                if Q:
+                    print('нет такой кары')
                     bay_card = await conn.fetchrow('''
-                        SELECT EXISTS (
-                            SELECT 1
-                            FROM users
-                            JOIN goalkeepers ON (users.balance > goalkeepers.pur_price)
-                            WHERE users.tg_id = $1
-                            AND goalkeepers.goalkeeper_id = $2
-                        )
-                    ''', tg_id, id)
+                                            SELECT EXISTS (
+                                                SELECT 1
+                                                FROM users
+                                                JOIN goalkeepers ON (users.balance > goalkeepers.pur_price)
+                                                WHERE users.tg_id = $1
+                                                AND goalkeepers.goalkeeper_id = $2
+                                            )
+                                        ''', tg_id, id)
 
                     print(bay_card)
                     if bay_card[0]:
                         await conn.fetchrow(f'''UPDATE users 
-                                                SET balance = balance - (SELECT pur_price 
-                                                                            FROM goalkeepers 
-                                                                            WHERE goalkeeper_id = {id}) 
-                                                WHERE tg_id = {tg_id}''')
+                                                    SET balance = balance - (SELECT pur_price 
+                                                                                FROM goalkeepers 
+                                                                                WHERE goalkeeper_id = {id}) 
+                                                    WHERE tg_id = {tg_id}''')
                         return 1
                     else:
                         return 2
-            else:
-                if Q:
-                    await conn.fetchrow(f'''UPDATE users 
-                                            SET balance = balance + (SELECT pur_price 
-                                                                    FROM goalkeepers 
-                                                                    WHERE goalkeeper_id = {id}) 
-                                            WHERE tg_id = {tg_id};
-                                            
-                                            DELETE FROM players_user
-                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
-                                                AND player_id = {id} AND position = '{category}'
-                                                ''')
-                    return 1
                 else:
                     return 0
+
 
 
 
