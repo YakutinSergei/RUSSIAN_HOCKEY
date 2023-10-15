@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State, default_state
 from aiogram.types import Message, CallbackQuery
 
-from bot_menu.menu import create_inline_kb
+from bot_menu.menu import create_inline_kb, admin_kb
 from database.orm import add_card_players, add_card_goalkeeper, get_user
-from lexicon.lexicon_ru import MENU, PLAYERS
+from lexicon.lexicon_ru import PLAYERS, admin_kb_ru
 
 router: Router = Router()
 
@@ -47,14 +47,14 @@ async def check_admin(message: Message):
 
 '''Выбор кого добавить'''
 
-@router.message(F.text == MENU['add_player'])
-async def choise_add_player(message: Message, state: FSMContext):
-    await message.answer(text='❓Пожалуйста, уточните, какую позицию игрока вы хотели бы добавить?❓',
+@router.callback_query(F.data == admin_kb_ru['add_card'])
+async def choise_add_player(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(text='❓Пожалуйста, уточните, какую позицию игрока вы хотели бы добавить?❓',
                          reply_markup=create_inline_kb(1, 'add_player_',
                                                         PLAYERS['forward'],
                                                         PLAYERS['defender'],
                                                         PLAYERS['goalkeeper']))
-
+    await callback.answer()
 
     # await state.set_state(FSMadd_player.name)
 

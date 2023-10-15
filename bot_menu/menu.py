@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from lexicon.lexicon_ru import MENU, PAGE
+from lexicon.lexicon_ru import PAGE, admin_kb_ru
 
 '''Изначальное меню'''
 
@@ -107,11 +107,10 @@ btn_game: KeyboardButton = KeyboardButton(text='🏒🥅ИГРА')
 btn_command: KeyboardButton = KeyboardButton(text='🥅Команда')
 btn_bet: KeyboardButton = KeyboardButton(text='🎲Cтавки')
 btn_tournament: KeyboardButton = KeyboardButton(text='🏆Добавить турнир')
-btn_players_add: KeyboardButton = KeyboardButton(text=MENU['add_player'])
 menu_user_private: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=1, keyboard=[[btn_menu], [btn_game]],
                                                     resize_keyboard=True)
 menu_admin: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=2, keyboard=[[btn_menu], [btn_game], [btn_bet],
-                                                                         [btn_tournament], [btn_players_add]],
+                                                                         [btn_tournament]],
                                                     resize_keyboard=True)
 menu_user: ReplyKeyboardMarkup = ReplyKeyboardMarkup(width=1, keyboard=[[btn_command],[btn_game]],
                                                     resize_keyboard=True)
@@ -134,26 +133,17 @@ def kb_team(pref: str, name_pos: str, *buttons: str) -> InlineKeyboardMarkup:
 async def admin_kb():
     inline_markup: InlineKeyboardBuilder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(
-        text=admin_kb_ru['add_op'],
-        callback_data=admin_kb_ru['add_op']
+        text=admin_kb_ru['add_bet'],
+        callback_data=admin_kb_ru['add_bet']
     ), InlineKeyboardButton(
-        text=admin_kb_ru['del_op'],
-        callback_data=admin_kb_ru['del_op']
+        text=admin_kb_ru['end_bet'],
+        callback_data=admin_kb_ru['end_bet']
     ), InlineKeyboardButton(
-        text=admin_kb_ru['add_mailing_list'],
-        callback_data=admin_kb_ru['add_mailing_list']
+        text=admin_kb_ru['add_tournament'],
+        callback_data=admin_kb_ru['add_tournament']
     ), InlineKeyboardButton(
-        text=admin_kb_ru['statistics'],
-        callback_data=admin_kb_ru['statistics']
-    ), InlineKeyboardButton(
-        text=admin_kb_ru['promo'],
-        callback_data=admin_kb_ru['promo']
-    ), InlineKeyboardButton(
-        text=admin_kb_ru['vip'],
-        callback_data=admin_kb_ru['vip']
-    ), InlineKeyboardButton(
-        text=admin_kb_ru['set'],
-        callback_data=admin_kb_ru['set']
+        text=admin_kb_ru['add_card'],
+        callback_data=admin_kb_ru['add_card']
     )
     ]
 

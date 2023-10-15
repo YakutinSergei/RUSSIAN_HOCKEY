@@ -4,9 +4,6 @@ LEXICON_START: dict[str, str] = {
 }
 
 
-MENU: dict[str, str] = {
-    'add_player': '➕Добавить игрока',
-}
 
 PLAYERS: dict[str, str] = {
     'forward': '⚡️Нападающий⚡️',
@@ -43,8 +40,9 @@ Price: dict[str, str] = {
 }
 
 
-Admin_kb_ru: dict[str, str] = {
+admin_kb_ru: dict[str, str] = {
     'add_bet': '➕Добавить ставку🎲',
     'end_bet': '✅Завершить ставку🎲',
     'add_tournament': '✅Добавить турнир🏆',
+    'add_card': '✅Карту игрока🎴',
 }
