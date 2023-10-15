@@ -139,7 +139,7 @@ async def price_card(callback: CallbackQuery):
     category = callback.data.split('_')[2]
     id_card = int(callback.data.split('_')[-1])
     if callback.data.split('_')[1] == Price['buy']:
-        #Проверяем что нет такой карты у вас
+        #Проверяем что нет такой карты у вас, и если нет то покупаем если хватит денег
         card_availability = await card_ava(my_tg_id, category, id_card, 1)
 
         if card_availability == 1:
@@ -150,6 +150,8 @@ async def price_card(callback: CallbackQuery):
             await callback.answer("Такая карта у вас уже есть", show_alert=True)
 
     else:
+        card_availability = await card_ava(my_tg_id, category, id_card, 0)
+
         players = await get_card_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
         price_players = await get_price_card(callback.data.split('_')[2], int(callback.data.split('_')[-1]), 0)
         if players:
