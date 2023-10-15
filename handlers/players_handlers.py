@@ -72,15 +72,15 @@ async def paging_card(callback: CallbackQuery):
             if goalkeeper:
                 user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
                 price = f"{Price['buy']}: {goalkeeper['pur_price']}"
-                len_pl = await len_card(goalkeeper['id'], PLAYERS['goalkeeper'])
+                len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
                 for i in range(len(user_goalkeeper)):
-                    if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
+                    if user_goalkeeper[i]['player_id'] == goalkeeper['goalkeeper_id']:
                         price = f"{Price['sell']}: {goalkeeper['sal_price']}"
 
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
                                              media=InputMediaPhoto(media=goalkeeper['img']),
                                                                        reply_markup=create_pg_kb_players(
-                                                                           f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['id']}",
+                                                                           f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['goalkeeper_id']}",
                                                                            price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
                                                                            'forward'))
         else:
@@ -88,14 +88,14 @@ async def paging_card(callback: CallbackQuery):
             if players:
                 user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
                 price = f"{Price['buy']}: {players['pur_price']}"
-                len_pl = await len_card(players['id'], callback.data.split('_')[2])
+                len_pl = await len_card(players['player_id'], callback.data.split('_')[2])
                 for i in range(len(user_players)):
-                    if user_players[i]['id_players'] == players['id']:
+                    if user_players[i]['player_id'] == players['player_id']:
                         price = f"{Price['sell']}: {players['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
                                              media=InputMediaPhoto(media=players['img']),
                                              reply_markup=create_pg_kb_players(
-                                                 f"pg_card_{callback.data.split('_')[2]}_{players['id']}",
+                                                 f"pg_card_{callback.data.split('_')[2]}_{players['player_id']}",
                                                  price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
                                                  'forward'))
     else:
@@ -104,14 +104,14 @@ async def paging_card(callback: CallbackQuery):
             if goalkeeper:
                 user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
                 price = f"{Price['buy']}: {goalkeeper['pur_price']}"
-                len_pl = await len_card(goalkeeper['id'], PLAYERS['goalkeeper'])
+                len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
                 for i in range(len(user_goalkeeper)):
-                    if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
+                    if user_goalkeeper[i]['id_players'] == goalkeeper['goalkeeper_id']:
                         price = f"{Price['sell']}: {goalkeeper['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
                                              media=InputMediaPhoto(media=goalkeeper['img']),
                                                                        reply_markup=create_pg_kb_players(
-                                                                           f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['id']}",
+                                                                           f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['goalkeeper_id']}",
                                                                            price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
                                                                            'forward'))
         else:
@@ -119,14 +119,14 @@ async def paging_card(callback: CallbackQuery):
             if players:
                 user_players = await get_user_players(callback.from_user.id, callback.data.split('_')[2])
                 price = f"{Price['buy']}: {players['pur_price']}"
-                len_pl = await len_card(players['id'], callback.data.split('_')[2])
+                len_pl = await len_card(players['player_id'], callback.data.split('_')[2])
                 for i in range(len(user_players)):
-                    if user_players[i]['id_players'] == players['id']:
+                    if user_players[i]['player_id'] == players['id']:
                         price = f"{Price['sell']}: {players['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
                                              media=InputMediaPhoto(media=players['img']),
                                              reply_markup=create_pg_kb_players(
-                                                 f"pg_card_{callback.data.split('_')[2]}_{players['id']}",
+                                                 f"pg_card_{callback.data.split('_')[2]}_{players['player_id']}",
                                                  price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
                                                  'forward'))
 
