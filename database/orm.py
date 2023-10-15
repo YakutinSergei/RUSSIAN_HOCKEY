@@ -446,7 +446,7 @@ async def get_goalkeeper_next(id):
                                          f"SELECT 1 "
                                          f"FROM goalkeepers "
                                          f"WHERE goalkeeper_id = {id}) AND goalkeeper_id > {id} "
-                                         f"ORDER BY id LIMIT 1")
+                                         f"ORDER BY goalkeeper_id LIMIT 1")
         return goalkeeper
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -468,7 +468,7 @@ async def get_players_next_page(id, category):
                                          f"SELECT 1 "
                                          f"FROM players "
                                          f"WHERE position = '{category}' AND player_id = {id}) AND player_id > {id} "
-                                         f"ORDER BY id LIMIT 1")
+                                         f"ORDER BY player_id LIMIT 1")
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
