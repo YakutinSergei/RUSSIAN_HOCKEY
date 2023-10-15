@@ -727,7 +727,6 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         AND player_id = {id} 
                                                         AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                                   
                                                  ''')
-            print(availability)
             if availability:
                 if Q:
                     return 0
@@ -740,12 +739,13 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         (SELECT pur_price FROM goalkeepers WHERE goalkeeper_id = {id})
                                             )
                     ''')
+                    print(bay_card)
                     if bay_card:
-                        await conn.fetchrow(f"UPDATE users "
-                                            f"SET balance = balance - (SELECT pur_price "
-                                                                            f"FROM goalkeepers "
-                                                                            f"WHERE goalkeeper_id = {id}) "
-                                            f"WHERE tg_id = {tg_id}")
+                        await conn.fetchrow(f'''UPDATE users 
+                                                SET balance = balance - (SELECT pur_price 
+                                                                            FROM goalkeepers 
+                                                                            WHERE goalkeeper_id = {id}) 
+                                                WHERE tg_id = {tg_id}''')
                         return 1
                     else:
                         return 2
