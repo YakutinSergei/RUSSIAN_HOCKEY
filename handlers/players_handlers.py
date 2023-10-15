@@ -28,18 +28,14 @@ async def choice_player(callback: CallbackQuery):
 async def choice_player(callback: CallbackQuery):
     if callback.data.split('_')[-1] == PLAYERS['goalkeeper']:
         goalkeeper = await get_goalkeeper_page()
-        print(goalkeeper)
         user_goalkeeper = await get_user_players(callback.from_user.id, callback.data.split('_')[-1])
-        print(user_goalkeeper)
         price = f"{Price['buy']}: {goalkeeper['pur_price']}"
         len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
         for i in range(len(user_goalkeeper)):
             if user_goalkeeper[i]['player_id'] == goalkeeper['goalkeeper_id']:
                 price = f"{Price['sell']}: {goalkeeper['sal_price']}"
-
         await bot.send_photo(chat_id=callback.from_user.id,
                              photo=goalkeeper['img'],
-                             caption=caption_players(0, goalkeeper),
                              reply_markup=create_pg_kb_players(f"pg_card_{callback.data.split('_')[-1]}_{goalkeeper['id']}", price,
                                                                'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}', 'forward'))
 
@@ -61,7 +57,6 @@ async def choice_player(callback: CallbackQuery):
                 price = f"{Price['sell']}: {players['sal_price']}"
         await bot.send_photo(chat_id=callback.from_user.id,
                              photo=players['img'],
-                             caption=caption_players(1, players),
                              reply_markup=create_pg_kb_players(
                                  f"pg_card_{callback.data.split('_')[-1]}_{players['id']}", price,
                                  'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}', 'forward'))
@@ -83,8 +78,7 @@ async def paging_card(callback: CallbackQuery):
                         price = f"{Price['sell']}: {goalkeeper['sal_price']}"
 
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=goalkeeper['img'],
-                                                                       caption=caption_players(0, goalkeeper)),
+                                             media=InputMediaPhoto(media=goalkeeper['img']),
                                                                        reply_markup=create_pg_kb_players(
                                                                            f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['id']}",
                                                                            price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
@@ -99,8 +93,7 @@ async def paging_card(callback: CallbackQuery):
                     if user_players[i]['id_players'] == players['id']:
                         price = f"{Price['sell']}: {players['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=players['img'],
-                                                                   caption=caption_players(1, players)),
+                                             media=InputMediaPhoto(media=players['img']),
                                              reply_markup=create_pg_kb_players(
                                                  f"pg_card_{callback.data.split('_')[2]}_{players['id']}",
                                                  price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
@@ -116,8 +109,7 @@ async def paging_card(callback: CallbackQuery):
                     if user_goalkeeper[i]['id_players'] == goalkeeper['id']:
                         price = f"{Price['sell']}: {goalkeeper['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=goalkeeper['img'],
-                                                                       caption=caption_players(0, goalkeeper)),
+                                             media=InputMediaPhoto(media=goalkeeper['img']),
                                                                        reply_markup=create_pg_kb_players(
                                                                            f"pg_card_{callback.data.split('_')[2]}_{goalkeeper['id']}",
                                                                            price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
@@ -132,8 +124,7 @@ async def paging_card(callback: CallbackQuery):
                     if user_players[i]['id_players'] == players['id']:
                         price = f"{Price['sell']}: {players['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
-                                             media=InputMediaPhoto(media=players['img'],
-                                                                   caption=caption_players(1, players)),
+                                             media=InputMediaPhoto(media=players['img']),
                                              reply_markup=create_pg_kb_players(
                                                  f"pg_card_{callback.data.split('_')[2]}_{players['id']}",
                                                  price, 'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}',
@@ -173,17 +164,3 @@ async def price_card(callback: CallbackQuery):
 
 
 
-'''Функция описания игрока'''
-def caption_players(N, player):
-    if N > 0:
-        text = f'👤{player["p_name"]}\n' \
-               f'{Attributes_players["attack"]}: {player["p_attack"]}\n' \
-               f'{Attributes_players["endurance"]}: {player["p_endurance"]}\n' \
-               f'{Attributes_players["power"]}: {player["p_power"]}\n' \
-               f'{Attributes_players["defense"]}: {player["p_defense"]}'
-    else:
-        text = f'👤{player["g_name"]}\n' \
-               f'{Attributes_goalkeepers["reliability"]}: {"{:.1f}".format(player["g_reliability"])}\n' \
-               f'{Attributes_goalkeepers["endurance"]}: {player["g_endurance"]}\n' \
-               f'{Attributes_goalkeepers["defense"]}: {player["g_defense"]}'
-    return text
