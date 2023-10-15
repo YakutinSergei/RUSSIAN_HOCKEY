@@ -731,6 +731,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                 if Q:
                     return 0
                 else:
+                    print('zzzzz')
                     bay_card = await conn.fetchrow('''
                         SELECT EXISTS (
                             SELECT 1
@@ -740,7 +741,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                             AND goalkeepers.goalkeeper_id = $2
                         )
                     ''', tg_id, id)
-                    
+
                     print(bay_card)
                     if bay_card[0]:
                         await conn.fetchrow(f'''UPDATE users 
