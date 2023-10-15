@@ -747,7 +747,6 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                         return 0
             else:
                 if Q:
-                    print('нет такой кары')
                     bay_card = await conn.fetchrow('''
                                             SELECT EXISTS (
                                                 SELECT 1
@@ -758,13 +757,20 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                             )
                                         ''', tg_id, id)
 
-                    print(bay_card)
                     if bay_card[0]:
                         await conn.fetchrow(f'''UPDATE users 
                                                     SET balance = balance - (SELECT pur_price 
                                                                                 FROM goalkeepers 
                                                                                 WHERE goalkeeper_id = {id}) 
-                                                    WHERE tg_id = {tg_id}''')
+                                                    WHERE tg_id = {tg_id};
+                                                ''')
+                        await conn.execute(f'''INSERT INTO players_user(user_id, player_id, position) 
+                                                        VALUES (
+                                                            (SELECT user_id FROM users WHERE tg_id = $1),
+                                                            $2,
+                                                            $3
+                                                        )''',
+                                           tg_id, id, category)
                         return 1
                     else:
                         return 2

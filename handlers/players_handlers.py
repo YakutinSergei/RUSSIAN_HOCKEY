@@ -144,7 +144,6 @@ async def price_card(callback: CallbackQuery):
 
         if card_availability == 1:
             await callback.answer("Поздравляю с приобретением", show_alert=True)
-            await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
         elif card_availability == 2:
             await callback.answer("К сожалению Вам не хватает средств для покупки", show_alert=True)
         else:
