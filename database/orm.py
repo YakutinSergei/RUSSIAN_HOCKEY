@@ -469,6 +469,8 @@ async def get_players_next_page(id, category):
                                          f"FROM players "
                                          f"WHERE position = '{category}' AND player_id = {id}) AND player_id > {id} "
                                          f"ORDER BY player_id LIMIT 1")
+        return player
+
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -476,7 +478,6 @@ async def get_players_next_page(id, category):
     finally:
         if conn:
             await conn.close()
-            return player
             print('[INFO] PostgresSQL closed')
 
 '''Назад голкипер'''
@@ -486,9 +487,11 @@ async def get_goalkeeper_previous(id):
                                      host=env('host'))
 
         goalkeeper = await conn.fetchrow(f"SELECT * FROM goalkeepers "
-                                         f"WHERE id < {id} "
-                                         f"ORDER BY id DESC "
+                                         f"WHERE goalkeeper_id < {id} "
+                                         f"ORDER BY goalkeeper_id DESC "
                                          f"LIMIT 1")
+        return goalkeeper
+
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -496,7 +499,6 @@ async def get_goalkeeper_previous(id):
     finally:
         if conn:
             await conn.close()
-            return goalkeeper
             print('[INFO] PostgresSQL closed')
 
 
@@ -507,9 +509,10 @@ async def get_players_previous_page(id, category):
                                      host=env('host'))
 
         player = await conn.fetchrow(f"SELECT * FROM players "
-                                         f"WHERE position = '{category}' AND id < {id} "
-                                         f"ORDER BY id DESC "
+                                         f"WHERE position = '{category}' AND player_id < {id} "
+                                         f"ORDER BY player_id DESC "
                                          f"LIMIT 1")
+        return player
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -517,7 +520,7 @@ async def get_players_previous_page(id, category):
     finally:
         if conn:
             await conn.close()
-            return player
+
             print('[INFO] PostgresSQL closed')
 
 
