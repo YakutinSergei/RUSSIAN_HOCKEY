@@ -393,7 +393,7 @@ async def get_user_players(tg_id, category):
         card = await conn.fetch(f'''SELECT player_id 
                                     FROM players_user 
                                     JOIN users USING (user_id) 
-                                    WHERE players_user.position = '{category}' AND user.tg_id = {tg_id}''')
+                                    WHERE players_user.position = '{category}' AND users.tg_id = {tg_id}''')
         return card
 
 
