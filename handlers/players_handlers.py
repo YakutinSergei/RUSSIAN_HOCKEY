@@ -5,7 +5,7 @@ from bot_menu.menu import create_inline_kb, create_pg_kb_players, main_menu
 from create_bot import bot
 from database.orm import get_goalkeeper_page, get_user_players, len_card, get_players_page, get_goalkeeper_next, \
     get_goalkeeper_previous, get_players_next_page, get_players_previous_page, get_name_commands_id, get_balance, \
-    get_price_card, get_card_user, add_card_user, up_balance_user, card_del_user
+    get_price_card, get_card_user, add_card_user, up_balance_user, card_del_user, card_ava
 from lexicon.lexicon_ru import PLAYERS, PAGE, Attributes_players, Attributes_goalkeepers, Price
 
 router: Router = Router()
@@ -135,13 +135,18 @@ async def paging_card(callback: CallbackQuery):
 '''Продать или купить'''
 @router.callback_query(F.data.startswith('price_'))
 async def price_card(callback: CallbackQuery):
+    my_tg_id = callback.from_user.id
+    category = callback.data.split('_')[2]
+    id_card = int(callback.data.split('_')[-1])
     if callback.data.split('_')[1] == Price['buy']:
+        #Проверяем что нет такой карты у вас
+        card_availability = await card_ava(my_tg_id, category, id_card, 1)
         balance_user = await get_balance(callback.from_user.id)
         price_players = await get_price_card(callback.data.split('_')[2], callback.data.split('_')[-1], 1)
         if balance_user['balance'] > price_players['pur_price']:
             await callback.answer("Поздравляю с приобретением", show_alert=True)
             await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-            await add_card_user(callback.from_user.id, int(callback.data.split('_')[-1]), callback.data.split('_')[2])
+            await add_card_user(callback.from_user.id, int(callback.data.split('_')[-1]), callback.data.split('_')[2], )
             await up_balance_user(callback.from_user.id, -(price_players['pur_price']))
         else:
             await callback.answer("К сожалению Вам не хватает средств для покупки", show_alert=True)

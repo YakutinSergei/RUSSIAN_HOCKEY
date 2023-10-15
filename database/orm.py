@@ -204,6 +204,7 @@ async def add_card_user(user_id, id_card, pos):
                                 )''',
                            user_id, id_card, pos)
 
+
     except Exception as _ex:
         print('[INFO] Error ', _ex)
 
@@ -553,17 +554,19 @@ async def get_price_card(category, id, Q): #Категория, id карточ�
         if category == PLAYERS['goalkeeper']:
             if Q == 1:
                 price = await conn.fetchrow(f"SELECT pur_price FROM goalkeepers "
-                                             f"WHERE id = {id}")
+                                             f"WHERE goalkeeper_id = {id}")
             else:
                 price = await conn.fetchrow(f"SELECT sal_price FROM goalkeepers "
-                                            f"WHERE id = {id}")
+                                            f"WHERE goalkeeper_id = {id}")
         else:
             if Q == 1:
                 price = await conn.fetchrow(f"SELECT pur_price FROM players "
-                                             f"WHERE id = {id} AND position='{category}'")
+                                             f"WHERE player_id = {id} AND position='{category}'")
             else:
                 price = await conn.fetchrow(f"SELECT sal_price FROM players "
-                                            f"WHERE id = {id} AND position='{category}'")
+                                            f"WHERE player_id = {id} AND position='{category}'")
+
+        return price
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -571,7 +574,6 @@ async def get_price_card(category, id, Q): #Категория, id карточ�
     finally:
         if conn:
             await conn.close()
-            return price
             print('[INFO] PostgresSQL closed')
 
 '''Проверка есть ли такая карта в команде'''
@@ -696,6 +698,71 @@ async def update_team(tg_id, card_user, old_card):
             await conn.fetchrow(f"UPDATE team SET defender_1 = {card_user} WHERE tg_id = {tg_id}")
         elif old_card == 5:
             await conn.fetchrow(f"UPDATE team SET defender_2 = {card_user} WHERE tg_id = {tg_id}")
+
+
+
+
+
+
+    except Exception as _ex:
+        print('[INFO] Error ', _ex)
+
+    finally:
+        if conn:
+            await conn.close()
+            print('[INFO] PostgresSQL closed')
+
+
+
+async def card_ava(tg_id: int, category: str, id: int, Q:int):
+    try:
+        conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
+                                     host=env('host'))
+        if category == PLAYERS['goalkeeper']:
+            #проверяем наличие
+            availability = await conn.fetchrow(f'''
+                                                SELECT id
+                                                FROM playres_users
+                                                WHERE position = '{category}' 
+                                                    AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
+                                                    AND player_id = {id}; 
+            ''')
+            if availability:
+                if Q:
+                    return 0
+                else:
+                    bay_card = await conn.fetchrow(f'''
+                                        SELECT EXISTS (
+                                                SELECT 1
+                                                FROM users, goalkeepers
+                                                WHERE (SELECT balance FROM users WHERE tg_id = {tg_id}) > 
+                                                        (SELECT pur_price FROM goalkeepers WHERE goalkeepers_id = {id}))
+                                            )
+                    ''')
+                    if bay_card:
+                        await conn.fetchrow(f"UPDATE users "
+                                            f"SET balance = balance - (SELECT pur_price "
+                                                                            f"FROM goalkeepers "
+                                                                            f"WHERE goalkeepers_id = {id}) "
+                                            f"WHERE tg_id = {tg_id}")
+                        return 1
+                    else:
+                        return 2
+            else:
+                if Q:
+                    await conn.fetchrow(f'''UPDATE users 
+                                            SET balance = balance + (SELECT pur_price 
+                                                                    FROM goalkeepers 
+                                                                    WHERE goalkeepers_id = {id}) 
+                                            WHERE tg_id = {tg_id};
+                                            
+                                            DELETE FROM players_user
+                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
+                                                AND player_id = {id} AND position = '{category}'
+                                                ''')
+                    return 1
+                else:
+                    return 0
 
 
 
