@@ -36,7 +36,7 @@ async def choice_player(callback: CallbackQuery):
                 price = f"{Price['sell']}: {goalkeeper['sal_price']}"
         await bot.send_photo(chat_id=callback.from_user.id,
                              photo=goalkeeper['img'],
-                             reply_markup=create_pg_kb_players(f"pg_card_{callback.data.split('_')[-1]}_{goalkeeper['id']}", price,
+                             reply_markup=create_pg_kb_players(f"pg_card_{callback.data.split('_')[-1]}_{goalkeeper['goalkeeper_id']}", price,
                                                                'backward', f'{len_pl[1]["row_number"]} / {len_pl[0]["count"]}', 'forward'))
 
     elif callback.data.split('_')[-1] == PAGE['back']:
