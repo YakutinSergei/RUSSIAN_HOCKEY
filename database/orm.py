@@ -776,6 +776,64 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                         return 2
                 else:
                     return 0
+        # Если это защитники или нападающий
+        else:
+            availability = await conn.fetchrow(f'''
+                                            SELECT id
+                                            FROM players_user
+                                            WHERE position = '{category}' 
+                                                    AND player_id = {id} 
+                                                    AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
+                                             ''')
+            if availability:
+                if Q:
+                    return 0
+                else:
+                    if Q:
+                        await conn.fetchrow(f'''UPDATE users 
+                                                            SET balance = balance + (SELECT pur_price 
+                                                                                    FROM players 
+                                                                                    WHERE player_id = {id}) 
+                                                            WHERE tg_id = {tg_id};
+
+                                                            DELETE FROM players_user
+                                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
+                                                                AND player_id = {id} AND position = '{category}'
+                                                                ''')
+                        return 1
+                    else:
+                        return 0
+            else:
+                if Q:
+                    bay_card = await conn.fetchrow('''
+                                                        SELECT EXISTS (
+                                                            SELECT 1
+                                                            FROM users
+                                                            JOIN players ON (users.balance > players.pur_price)
+                                                            WHERE users.tg_id = $1
+                                                            AND players.player_id = $2
+                                                        )
+                                                    ''', tg_id, id)
+
+                    if bay_card[0]:
+                        await conn.fetchrow(f'''UPDATE users 
+                                                SET balance = balance - (SELECT pur_price 
+                                                                            FROM players 
+                                                                            WHERE player_id = {id}) 
+                                                WHERE tg_id = {tg_id};
+                                            ''')
+                        await conn.execute(f'''INSERT INTO players_user(user_id, player_id, position) 
+                                                                    VALUES (
+                                                                        (SELECT user_id FROM users WHERE tg_id = $1),
+                                                                        $2,
+                                                                        $3
+                                                                    )''',
+                                           tg_id, id, category)
+                        return 1
+                    else:
+                        return 2
+                else:
+                    return 0
 
 
 
