@@ -107,7 +107,7 @@ async def paging_card(callback: CallbackQuery):
                 price = f"{Price['buy']}: {goalkeeper['pur_price']}"
                 len_pl = await len_card(goalkeeper['goalkeeper_id'], PLAYERS['goalkeeper'])
                 for i in range(len(user_goalkeeper)):
-                    if user_goalkeeper[i]['id_players'] == goalkeeper['goalkeeper_id']:
+                    if user_goalkeeper[i]['player_id'] == goalkeeper['goalkeeper_id']:
                         price = f"{Price['sell']}: {goalkeeper['sal_price']}"
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
                                              media=InputMediaPhoto(media=goalkeeper['img']),
