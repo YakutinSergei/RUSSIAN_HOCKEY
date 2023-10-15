@@ -722,7 +722,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
             #проверяем наличие
             availability = await conn.fetchrow(f'''
                                                 SELECT id
-                                                FROM playres_user
+                                                FROM players_user
                                                 WHERE position = '{category}' 
                                                     AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
                                                     AND player_id = {id}; 
