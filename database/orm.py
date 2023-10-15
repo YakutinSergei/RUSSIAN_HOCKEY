@@ -724,8 +724,8 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                 SELECT id
                                                 FROM players_user
                                                 WHERE position = '{category}' 
-                                                    AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
-                                                    AND player_id = {id};
+                                                        AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
+                                                        AND player_id = {id};
             ''')
 
             if availability:
