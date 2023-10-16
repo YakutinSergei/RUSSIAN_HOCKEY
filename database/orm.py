@@ -741,21 +741,20 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         WHERE goalkeeper_id = {id} 
                                                                 AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
                     ''')
-                    print(sel_card)
-                    # if not sel_card:
-                    #     await conn.fetchrow(f'''UPDATE users
-                    #                             SET balance = balance + (SELECT sal_price
-                    #                                                     FROM goalkeepers
-                    #                                                     WHERE goalkeeper_id = {id})
-                    #                             WHERE tg_id = {tg_id};''')
-                    #
-                    #     await conn.fetchrow(f'''DELETE FROM players_user
-                    #                             WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}
-                    #                                 AND player_id = {id} AND position = '{category}')
-                    #                          ''')
-                    #     return 1
-                    # else:
-                    #     return 2
+                    if not sel_card:
+                        await conn.fetchrow(f'''UPDATE users
+                                                SET balance = balance + (SELECT sal_price
+                                                                        FROM goalkeepers
+                                                                        WHERE goalkeeper_id = {id})
+                                                WHERE tg_id = {tg_id};''')
+
+                        await conn.fetchrow(f'''DELETE FROM players_user
+                                                WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}
+                                                    AND player_id = {id} AND position = '{category}')
+                                             ''')
+                        return 1
+                    else:
+                        return 2
 
             #Такого игрока у вас нет
             else:
