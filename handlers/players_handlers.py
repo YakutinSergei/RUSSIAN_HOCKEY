@@ -153,7 +153,6 @@ async def price_card(callback: CallbackQuery):
         card_availability = await card_ava(my_tg_id, category, id_card, 0)
         if card_availability == 1:
             await callback.answer("Игрок успешно продан", show_alert=True)
-            await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
         elif card_availability == 2:
             await callback.answer("Этот игрок является частью вашей хоккейной команды.\n"
                                   "Если вы рассматриваете продажу игрока, рекомендуется сначала найти замену для него",
