@@ -657,7 +657,7 @@ async def get_players_team(tg_id, category):
                                                AND players_user.player_id != {pl_def['defender_1']} 
                                                AND players_user.player_id != {pl_def['defender_2']}''')
         elif category == PLAYERS['forward']:
-            players = await conn.fetch(f'''SELECT players.id, players.img, players.name, players.attack, 
+            players = await conn.fetch(f'''SELECT players.player_id, players.img, players.name, players.attack, 
                                                     players.endurance, players.power, players.defense 
                                            FROM players_user 
                                            JOIN players 
@@ -668,7 +668,7 @@ async def get_players_team(tg_id, category):
                                            AND players_user.player_id != {pl_def['forward_2']} 
                                            AND players_user.player_id != {pl_def['forward_3']}''')
         else:
-            players = await conn.fetch(f'''SELECT goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, 
+            players = await conn.fetch(f'''SELECT goalkeepers.goalkeeper_id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, 
                                                 goalkeepers.endurance, goalkeepers.defense 
                                            FROM players_user 
                                            JOIN goalkeepers 
