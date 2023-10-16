@@ -794,7 +794,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                     AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
                                              ''')
             #Если такой игрок есть
-
+            print(availability)
             if availability:
                 #Покупка
                 if Q:
