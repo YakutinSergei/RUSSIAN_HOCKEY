@@ -154,9 +154,7 @@ async def price_card(callback: CallbackQuery):
         if card_availability == 1:
             await callback.answer("Игрок успешно продан", show_alert=True)
             await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-            await card_del_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
-            await up_balance_user(callback.from_user.id, price_players['sal_price'])
-        elif card_availability == 2: \
+        elif card_availability == 2:
             await callback.answer("Этот игрок является частью вашей хоккейной команды.\n"
                                   "Если вы рассматриваете продажу игрока, рекомендуется сначала найти замену для него",
                                   show_alert=True)
