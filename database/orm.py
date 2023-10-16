@@ -738,7 +738,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                     sel_card = await conn.fetchrow(f'''
                                                         SELECT id
                                                         FROM team
-                                                        WHERE goalkeeper_id = {availability['id']} 
+                                                        WHERE goalkeeper_id = {id} 
                                                                 AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
                     ''')
                     print(availability['id'])
@@ -816,11 +816,11 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                     sel_card = await conn.fetchrow(f'''
                                                         SELECT id
                                                         FROM team
-                                                        WHERE (forward_1 = {availability['id']} 
-                                                                OR forward_2 = {availability['id']} 
-                                                                OR forward_3 = {availability['id']} 
-                                                                OR defender_1 = {availability['id']} 
-                                                                OR defender_2 = {availability['id']}) 
+                                                        WHERE (forward_1 = {id} 
+                                                                OR forward_2 = {id} 
+                                                                OR forward_3 = {id} 
+                                                                OR defender_1 = {id} 
+                                                                OR defender_2 = {id}) 
                                                                 AND user_id = (SELECT user_ID FROM users WHERE tg_id = {tg_id})
                     ''')
                     if not sel_card:
