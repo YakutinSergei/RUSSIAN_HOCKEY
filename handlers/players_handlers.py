@@ -151,18 +151,24 @@ async def price_card(callback: CallbackQuery):
 
     else:
         card_availability = await card_ava(my_tg_id, category, id_card, 0)
-
-        players = await get_card_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
-        price_players = await get_price_card(callback.data.split('_')[2], int(callback.data.split('_')[-1]), 0)
-        if players:
-            await callback.answer("Этот игрок является частью вашей хоккейной команды.\n"
-                                  "Если вы рассматриваете продажу игрока, рекомендуется сначала найти замену для него",
-                                  show_alert=True)
-        else:
+        if card_availability == 1:
             await callback.answer("Игрок успешно продан", show_alert=True)
             await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
             await card_del_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
             await up_balance_user(callback.from_user.id, price_players['sal_price'])
+        elif card_availability == 2: \
+            await callback.answer("Этот игрок является частью вашей хоккейной команды.\n"
+                                  "Если вы рассматриваете продажу игрока, рекомендуется сначала найти замену для него",
+                                  show_alert=True)
+        else:
+            await callback.answer("У вас уже нет этого игрока", show_alert=True)
+
+        # players = await get_card_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
+        # price_players = await get_price_card(callback.data.split('_')[2], int(callback.data.split('_')[-1]), 0)
+        # if players:
+        #
+        # else:
+
 
     await callback.answer()
 

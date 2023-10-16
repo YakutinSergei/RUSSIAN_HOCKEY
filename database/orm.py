@@ -718,6 +718,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
+        #Проверяем является ли это враталь или нападающий с защитником
         if category == PLAYERS['goalkeeper']:
             #проверяем наличие
             availability = await conn.fetchrow(f'''
@@ -727,26 +728,29 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         AND player_id = {id} 
                                                         AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
                                                  ''')
+            #Если такой игрок есть
             if availability:
+                #покупка
                 if Q:
                     return 0
+                #Продажа
                 else:
-                    if Q:
-                        await conn.fetchrow(f'''UPDATE users 
-                                                SET balance = balance + (SELECT pur_price 
-                                                                        FROM goalkeepers 
-                                                                        WHERE goalkeeper_id = {id}) 
-                                                WHERE tg_id = {tg_id};
+                    await conn.fetchrow(f'''UPDATE users 
+                                            SET balance = balance + (SELECT sal_price 
+                                                                    FROM goalkeepers 
+                                                                    WHERE goalkeeper_id = {id}) 
+                                            WHERE tg_id = {tg_id};
 
-                                                DELETE FROM players_user
-                                                WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
-                                                    AND player_id = {id} AND position = '{category}'
-                                                    ''')
-                        return 1
-                    else:
-                        return 0
+                                            DELETE FROM players_user
+                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
+                                                AND player_id = {id} AND position = '{category}'
+                    ''')
+                    return 1
+            #Такого игрока у вас нет
             else:
+                #Покупка
                 if Q:
+                    #Проверка хватает ли денег на покупку
                     bay_card = await conn.fetchrow('''
                                             SELECT EXISTS (
                                                 SELECT 1
@@ -757,12 +761,14 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                             )
                                         ''', tg_id, id)
 
+                    #Если хватает денег на покупку
                     if bay_card[0]:
                         await conn.fetchrow(f'''UPDATE users 
                                                     SET balance = balance - (SELECT pur_price 
                                                                                 FROM goalkeepers 
                                                                                 WHERE goalkeeper_id = {id}) 
                                                     WHERE tg_id = {tg_id};
+                                                    
                                                 ''')
                         await conn.execute(f'''INSERT INTO players_user(user_id, player_id, position) 
                                                         VALUES (
@@ -772,12 +778,14 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         )''',
                                            tg_id, id, category)
                         return 1
+                    #Если не хватает денег на покупку
                     else:
                         return 2
                 else:
                     return 0
         # Если это защитники или нападающий
         else:
+            #проверяем наличие
             availability = await conn.fetchrow(f'''
                                             SELECT id
                                             FROM players_user
@@ -785,25 +793,30 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                     AND player_id = {id} 
                                                     AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})                                            
                                              ''')
+            #Если такой игрок есть
+
             if availability:
+                #Покупка
                 if Q:
                     return 0
+                #Продажа
                 else:
-                    if Q:
-                        await conn.fetchrow(f'''UPDATE users 
-                                                            SET balance = balance + (SELECT pur_price 
-                                                                                    FROM players 
-                                                                                    WHERE player_id = {id}) 
-                                                            WHERE tg_id = {tg_id};
+                    await conn.fetchrow(f'''UPDATE users 
+                                           SET balance = balance + (SELECT pur_price 
+                                                                   FROM players 
+                                                                   WHERE player_id = {id}) 
+                                           WHERE tg_id = {tg_id};
 
-                                                            DELETE FROM players_user
-                                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
-                                                                AND player_id = {id} AND position = '{category}'
-                                                                ''')
-                        return 1
-                    else:
-                        return 0
+                                           DELETE FROM players_user
+                                           WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
+                                               AND player_id = {id} AND position = '{category}'
+                                               ''')
+                    return 1
+
+
+            #Если такого игрока нет
             else:
+                #Покупка
                 if Q:
                     bay_card = await conn.fetchrow('''
                                                         SELECT EXISTS (
