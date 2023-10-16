@@ -637,18 +637,25 @@ async def get_players_team(tg_id, category):
     try:
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
-        pl_def = await conn.fetchrow(f"SELECT * FROM team  WHERE tg_id = {tg_id}")
+
+        pl_def = await conn.fetchrow(f'''SELECT defender_1, 
+                                                defender_2, 
+                                                forward_1, 
+                                                forward_2, 
+                                                forward_3, 
+                                                goalkeeper_id
+                                            FROM team 
+                                            WHERE tg_id = {tg_id}''')
 
         if category == PLAYERS['defender']:
-            players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
-                                        f"players.endurance, players.power, players.defense "
-                                       f"FROM players_user "
-                                       f"JOIN players "
-                                       f"ON players_user.player_id = players.id "
-                                       f"AND players_user.user_id = {tg_id} "
-                                       f"AND players_user.position = '{PLAYERS['defender']}' "
-                                       f"AND players_user.player_id != {pl_def['defender_1']} "
-                                       f"AND players_user.player_id != {pl_def['defender_2']};")
+            players = await conn.fetch(f'''SELECT players.player_id, players.img, players.name, players.attack, 
+                                                    players.endurance, players.power, players.defense 
+                                           FROM players_user 
+                                           JOIN players USING (player_id)
+                                               AND players_user.user_id = {tg_id} 
+                                               AND players_user.position = '{PLAYERS['defender']}' 
+                                               AND players_user.player_id != {pl_def['defender_1']} 
+                                               AND players_user.player_id != {pl_def['defender_2']}''')
         elif category == PLAYERS['forward']:
             players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
                                        f"players.endurance, players.power, players.defense "
@@ -665,10 +672,10 @@ async def get_players_team(tg_id, category):
                                         f"goalkeepers.endurance, goalkeepers.defense "
                                         f"FROM players_user "
                                         f"JOIN goalkeepers "
-                                        f"ON players_user.player_id = goalkeepers.id "
+                                        f"ON players_user.player_id = goalkeepers.goalkeeper_id "
                                        f"AND players_user.user_id = {tg_id} "
                                         f"AND players_user.position = '{PLAYERS['goalkeeper']}' "
-                                       f"AND players_user.player_id != {pl_def['goalkeeper']};")
+                                       f"AND players_user.player_id != {pl_def['goalkeeper_id']};")
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)

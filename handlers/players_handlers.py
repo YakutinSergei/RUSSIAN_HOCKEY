@@ -160,12 +160,6 @@ async def price_card(callback: CallbackQuery):
         else:
             await callback.answer("У вас уже нет этого игрока", show_alert=True)
 
-        # players = await get_card_user(callback.from_user.id, callback.data.split('_')[2], int(callback.data.split('_')[-1]))
-        # price_players = await get_price_card(callback.data.split('_')[2], int(callback.data.split('_')[-1]), 0)
-        # if players:
-        #
-        # else:
-
 
     await callback.answer()
 

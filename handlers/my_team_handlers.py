@@ -24,7 +24,7 @@ async def choice_menu(callback: CallbackQuery):
     await callback.answer()
 
 
-'''Кнопка вперед'''
+'''Кнопка вперед, назад и заменить'''
 @router.callback_query(F.data.startswith('my_team_'))
 async def my_team_page(callback: CallbackQuery):
     my_commands = await get_my_commands(callback.from_user.id)
@@ -34,17 +34,14 @@ async def my_team_page(callback: CallbackQuery):
             pg += 1
             if pg > 3:
                 pg_b = pg -1
-                N = 1
                 pos = PLAYERS['defender']
                 img = my_commands[pg_b]['p_img']
             elif pg > 0:
                 pg_b = pg -1
-                N = 1
                 pos = PLAYERS['forward']
                 img = my_commands[pg_b]['p_img']
             else:
                 pg_b = 0
-                N = 0
                 pos = PLAYERS['goalkeeper']
                 img = my_commands[pg_b]['g_img']
 
@@ -76,9 +73,12 @@ async def my_team_page(callback: CallbackQuery):
                                          media=InputMediaPhoto(media=img),
                                          reply_markup=kb_team(f"my_team_{pg}", pos,
                                                               'backward', PAGE['replace'], 'forward'))
+    #Заменить
     elif callback.data.split("_")[-1] == PAGE['replace']:
-        players = await get_players_team(callback.from_user.id,
-                                         callback.data.split("_")[-2])
+        my_tg_id = callback.from_user.id #Мой ид
+        category = callback.data.split("_")[-2]
+        players = await get_players_team(my_tg_id, category)
+
         if players:
             if int(callback.data.split("_")[2]) > 0:
                 N = 1
