@@ -645,37 +645,38 @@ async def get_players_team(tg_id, category):
                                                 forward_3, 
                                                 goalkeeper_id
                                             FROM team 
-                                            WHERE tg_id = {tg_id}''')
+                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}))''')
 
         if category == PLAYERS['defender']:
             players = await conn.fetch(f'''SELECT players.player_id, players.img, players.name, players.attack, 
                                                     players.endurance, players.power, players.defense 
                                            FROM players_user 
                                            JOIN players USING (player_id)
-                                               AND players_user.user_id = {tg_id} 
+                                               AND players_user.user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})  
                                                AND players_user.position = '{PLAYERS['defender']}' 
                                                AND players_user.player_id != {pl_def['defender_1']} 
                                                AND players_user.player_id != {pl_def['defender_2']}''')
         elif category == PLAYERS['forward']:
-            players = await conn.fetch(f"SELECT players.id, players.img, players.name, players.attack, "
-                                       f"players.endurance, players.power, players.defense "
-                                        f"FROM players_user "
-                                        f"JOIN players "
-                                        f"ON players_user.player_id = players.id "
-                                       f"AND players_user.user_id = {tg_id} "
-                                       f"AND players_user.position = '{PLAYERS['forward']}' "
-                                       f"AND players_user.player_id != {pl_def['forward_1']} "
-                                       f"AND players_user.player_id != {pl_def['forward_2']} "
-                                       f"AND players_user.player_id != {pl_def['forward_3']};")
+            players = await conn.fetch(f'''SELECT players.id, players.img, players.name, players.attack, 
+                                                    players.endurance, players.power, players.defense 
+                                           FROM players_user 
+                                           JOIN players 
+                                           ON players_user.player_id = players.id 
+                                           AND players_user.user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}) 
+                                           AND players_user.position = '{PLAYERS['forward']}' 
+                                           AND players_user.player_id != {pl_def['forward_1']} 
+                                           AND players_user.player_id != {pl_def['forward_2']} 
+                                           AND players_user.player_id != {pl_def['forward_3']}''')
         else:
-            players = await conn.fetch(f"SELECT goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, "
-                                        f"goalkeepers.endurance, goalkeepers.defense "
-                                        f"FROM players_user "
-                                        f"JOIN goalkeepers "
-                                        f"ON players_user.player_id = goalkeepers.goalkeeper_id "
-                                       f"AND players_user.user_id = {tg_id} "
-                                        f"AND players_user.position = '{PLAYERS['goalkeeper']}' "
-                                       f"AND players_user.player_id != {pl_def['goalkeeper_id']};")
+            players = await conn.fetch(f'''SELECT goalkeepers.id, goalkeepers.img, goalkeepers.name, goalkeepers.reliability, 
+                                                goalkeepers.endurance, goalkeepers.defense 
+                                           FROM players_user 
+                                           JOIN goalkeepers 
+                                           ON players_user.player_id = goalkeepers.goalkeeper_id 
+                                           AND players_user.user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}) 
+                                           AND players_user.position = '{PLAYERS['goalkeeper']}' 
+                                           AND players_user.player_id != {pl_def['goalkeeper_id']}''')
+        return players
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -683,7 +684,6 @@ async def get_players_team(tg_id, category):
     finally:
         if conn:
             await conn.close()
-            return players
             print('[INFO] PostgresSQL closed')
 
 
