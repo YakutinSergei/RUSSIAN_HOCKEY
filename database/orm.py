@@ -660,8 +660,7 @@ async def get_players_team(tg_id, category):
             players = await conn.fetch(f'''SELECT players.player_id, players.img, players.name, players.attack, 
                                                     players.endurance, players.power, players.defense 
                                            FROM players_user 
-                                           JOIN players 
-                                           ON players_user.player_id = players.id 
+                                           JOIN players USING(player_id)
                                            AND players_user.user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}) 
                                            AND players_user.position = '{PLAYERS['forward']}' 
                                            AND players_user.player_id != {pl_def['forward_1']} 
