@@ -750,7 +750,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
     
                                                 DELETE FROM players_user
                                                 WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
-                                                    AND player_id = {id} AND position = '{category}'
+                                                    AND player_id = {id} AND position = '{category}')
                         ''')
                         return 1
                     else:
@@ -832,7 +832,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
     
                                                DELETE FROM players_user
                                                WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id} 
-                                                   AND player_id = {id} AND position = '{category}'
+                                                   AND player_id = {id} AND position = '{category}')
                                                    ''')
                         return 1
                     else:
