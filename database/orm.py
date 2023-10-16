@@ -645,7 +645,7 @@ async def get_players_team(tg_id, category):
                                                 forward_3, 
                                                 goalkeeper_id
                                             FROM team 
-                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id}))''')
+                                            WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})''')
 
         if category == PLAYERS['defender']:
             players = await conn.fetch(f'''SELECT players.player_id, players.img, players.name, players.attack, 
