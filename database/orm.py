@@ -741,7 +741,7 @@ async def card_ava(tg_id: int, category: str, id: int, Q:int):
                                                         WHERE goalkeeper_id = {availability['id']} 
                                                                 AND user_id = (SELECT user_id FROM users WHERE tg_id = {tg_id})
                     ''')
-                    print(sel_card)
+                    print(availability['id'])
                     # if not sel_card:
                     #     await conn.fetchrow(f'''UPDATE users
                     #                             SET balance = balance + (SELECT sal_price
