@@ -307,6 +307,7 @@ async def get_opp_commands(tg_id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
+        tg_id_ran = await conn.fetchrow(f'''SELECT tg_id FROM users WHERE users.tg_id != {tg_id} ORDER BY random() LIMIT 1''')
         teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
                                             team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, 
                                             g.reliability AS g_reliability, g.endurance AS g_endurance, 
@@ -322,9 +323,8 @@ async def get_opp_commands(tg_id):
                                             OR team.defender_1 = player_id 
                                             OR team.defender_2 = player_id 
                                             JOIN users USING (user_id) 
-                                            WHERE users.tg_id != {tg_id} 
-                                            ORDER BY random() LIMIT 1, 
-                                            CASE WHEN team.forward_1 = player_id 
+                                            WHERE users.tg_id = {tg_id_ran["tg_id"]} 
+                                            ORDER BY CASE WHEN team.forward_1 = player_id 
                                             THEN 0 WHEN team.forward_2 = player_id 
                                             THEN 1 WHEN team.forward_3 = player_id 
                                             THEN 2 WHEN team.defender_1 = player_id 
