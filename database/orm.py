@@ -249,7 +249,7 @@ async def up_command_ready(id, points, my_gol, opp_gol):
         await conn.fetch(f"UPDATE team SET ready = 'False', game_date = 'now()',"
                          f"pucks_scored = pucks_scored + {my_gol}, missed_pucks = missed_pucks + {opp_gol}, "
                          f"points = points + {points}, count = count + 1 "
-                         f" WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {id};")
+                         f" WHERE user_id = (SELECT user_id FROM users WHERE tg_id = {id});")
 
 
 
