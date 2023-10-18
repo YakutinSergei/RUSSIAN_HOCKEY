@@ -326,8 +326,8 @@ async def get_opp_commands(tg_id):
                                             THEN 0 WHEN team.forward_2 = player_id THEN 1 
                                             WHEN team.forward_3 = player_id THEN 2 
                                             WHEN team.defender_1 = player_id THEN 3 
-                                            WHEN team.defender_2 = player_id THEN 4 END
-                                            ORDER BY random() LIMIT 1
+                                            WHEN team.defender_2 = player_id THEN 4 END,
+                                            random() LIMIT 1
                 ''')
         return teams
 
