@@ -78,7 +78,6 @@ async def my_team_page(callback: CallbackQuery):
         my_tg_id = callback.from_user.id #Мой ид
         category = callback.data.split("_")[-2]
         players = await get_players_team(my_tg_id, category)
-
         if players:
             if int(callback.data.split("_")[2]) > 0:
                 N = 1
