@@ -105,11 +105,6 @@ async def paging_card(callback: CallbackQuery):
     print(players)
     if callback.data.split('_')[-1] == 'forward':
         if players:
-            if callback.data.split("_")[-2] == PLAYERS['goalkeeper']:
-                N = 0
-            else:
-                N = 1
-
             if  pg < len(players)-1:
                 pg = int(callback.data.split('_')[2]) + 1
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
@@ -120,10 +115,6 @@ async def paging_card(callback: CallbackQuery):
                                                                                'forward'))
     elif callback.data.split('_')[-1] == 'backward':
         if players:
-            if callback.data.split("_")[-2] == PLAYERS['goalkeeper']:
-                N = 0
-            else:
-                N = 1
             if pg > 0:
                 pg = int(callback.data.split('_')[2]) - 1
                 await bot.edit_message_media(chat_id=callback.message.chat.id, message_id=callback.message.message_id,
@@ -135,17 +126,14 @@ async def paging_card(callback: CallbackQuery):
 
     #Выбор игрока при замене
     elif callback.data.split('_')[-1] == 'choice':
-        await update_team(callback.from_user.id, players[pg]['id'], int(callback.data.split('_')[3]))
+        await update_team(callback.from_user.id, players[pg]['player_id'], int(callback.data.split('_')[3]))
         pg = int(callback.data.split('_')[3])
         my_commands = await get_my_commands(callback.from_user.id)
         if pg > 3:
-            N = 1
             pos = PLAYERS['defender']
         elif pg > 0:
-            N = 1
             pos = PLAYERS['forward']
         else:
-            N = 0
             pos = PLAYERS['goalkeeper']
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
                                      media=InputMediaPhoto(media=my_commands[pg]['img']),
@@ -155,13 +143,10 @@ async def paging_card(callback: CallbackQuery):
         pg = int(callback.data.split('_')[3])
         my_commands = await get_my_commands(callback.from_user.id)
         if pg > 3:
-            N = 1
             pos = PLAYERS['defender']
         elif pg > 0:
-            N = 1
             pos = PLAYERS['forward']
         else:
-            N = 0
             pos = PLAYERS['goalkeeper']
 
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
