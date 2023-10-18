@@ -132,8 +132,10 @@ async def paging_card(callback: CallbackQuery):
         img = 'p_img'
         if pg > 3:
             pos = PLAYERS['defender']
+            pg -= 1
         elif pg > 0:
             pos = PLAYERS['forward']
+            pg -= 1
         else:
             pos = PLAYERS['goalkeeper']
             img = 'g_img'
