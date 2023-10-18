@@ -319,7 +319,7 @@ async def get_opp_commands(tg_id):
                                             JOIN goalkeepers g USING (goalkeeper_id) 
                                             JOIN players p ON team.forward_1 = player_id 
                                             OR team.forward_2 = player_id 
-                                            OR team.forward3 = player_id 
+                                            OR team.forward_3 = player_id 
                                             OR team.defender_1 = player_id 
                                             OR team.defender_2 = player_id 
                                             JOIN users USING (user_id) 
