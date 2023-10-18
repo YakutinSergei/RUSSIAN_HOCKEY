@@ -35,18 +35,16 @@ async def process_start_command(message: Message, state: FSMContext):
 
 
 '''Кнопка игра'''
-
-
 @router.message(F.text == '🏒🥅ИГРА')
 async def menu_commands(message: Message):
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-    command = await get_name_commands_id(message.from_user.id)
-    difference = datetime.now() - command['game_date']
+    #Получаем мои данные
+    my_commands = await get_my_commands(message.from_user.id)
+    difference = datetime.now() - my_commands[0]['game_date']
     seconds = difference.total_seconds()
     hours = seconds / (60 * 60)
     minutes = seconds / 60
-    if hours >= 24 or command['ready']:
-        my_commands = await get_my_commands(message.from_user.id)
+    if hours >= 24 or my_commands[0]['ready']:
         opp_commands = await get_opp_commands(message.from_user.id)
         my_indicator = await get_indicators(my_commands)
         opp_indicator = await get_indicators(opp_commands)

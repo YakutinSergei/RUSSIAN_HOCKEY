@@ -102,7 +102,7 @@ async def paging_card(callback: CallbackQuery):
     players = await get_players_team(callback.from_user.id,
                                      callback.data.split("_")[-2])
     pg = int(callback.data.split('_')[2])
-    print(players)
+    # Кнопка вперед
     if callback.data.split('_')[-1] == 'forward':
         if players:
             if  pg < len(players)-1:
@@ -113,6 +113,7 @@ async def paging_card(callback: CallbackQuery):
                                                                                f"ch_team_{pg}_{callback.data.split('_')[3]}_{callback.data.split('_')[-2]}",
                                                                                PAGE['choice'], 'backward', f'{pg+1} / {len(players)}',
                                                                                'forward'))
+    # Кнопка назад
     elif callback.data.split('_')[-1] == 'backward':
         if players:
             if pg > 0:
@@ -132,17 +133,20 @@ async def paging_card(callback: CallbackQuery):
         img = 'p_img'
         if pg > 3:
             pos = PLAYERS['defender']
-            pg -= 1
+            pg_team = pg -1
         elif pg > 0:
             pos = PLAYERS['forward']
-            pg -= 1
+            pg_team = pg -1
         else:
             pos = PLAYERS['goalkeeper']
             img = 'g_img'
+            pg_team = 0
+
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=my_commands[pg][img]),
-                                     reply_markup=kb_team(f"my_team_{pg}", pos,
+                                     media=InputMediaPhoto(media=my_commands[pg_team][img]),
+                                     reply_markup=kb_team(f"my_team_{pg+1}", pos,
                                                           'backward', PAGE['replace'], 'forward'))
+    #назад
     else:
         pg = int(callback.data.split('_')[3])
         my_commands = await get_my_commands(callback.from_user.id)

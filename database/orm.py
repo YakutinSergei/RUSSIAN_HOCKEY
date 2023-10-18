@@ -307,32 +307,29 @@ async def get_opp_commands(tg_id):
         conn = await asyncpg.connect(user=env('user'), password=env('password'), database=env('db_name'),
                                      host=env('host'))
 
-        command = []
-        id_commands = await conn.fetchrow(f"SELECT tg_id FROM users WHERE tg_id != {tg_id} ORDER BY random() LIMIT 1")
-
-
-        goalkeeper = await conn.fetchrow(f"SELECT team.name as t_name, goalkeepers.name, goalkeepers.reliability, "
-                                      f"goalkeepers.endurance, goalkeepers.defense "
-                                      f"FROM team "
-                                      f"JOIN goalkeepers "
-                                      f"ON team.goalkeeper = goalkeepers.id AND team.tg_id = {id_commands['tg_id']};")
-        command.append(goalkeeper)
-
-        for i in range(3):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.name, players.attack, "
-                                          f"players.endurance, players.power, players.defense "
-                                          f"FROM team "
-                                          f"JOIN players "
-                                          f"ON team.forward_{i+1} = players.id AND team.tg_id = {id_commands['tg_id']};")
-            command.append(forward)
-
-        for i in range(2):
-            forward = await conn.fetchrow(f"SELECT team.name as t_name, players.name, players.attack, "
-                                          f"players.endurance, players.power, players.defense "
-                                          f"FROM team "
-                                          f"JOIN players "
-                                          f"ON team.defender_{i+1} = players.id AND team.tg_id = {id_commands['tg_id']};")
-            command.append(forward)
+        teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
+                                                    team.missed_pucks, team.points, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
+                                                    g.endurance AS g_endurance, g.defense AS g_defense, g.pur_price AS g_pur_price, 
+                                                    g.sal_price AS g_sal_price, p.img AS p_img, p.name AS p_name, p.position AS p_position, 
+                                                    p.attack AS p_attack, p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
+                                                    p.pur_price AS p_pur_price, p.sal_price AS p_sal_price 
+                                            FROM team 
+                                            JOIN goalkeepers g USING (goalkeeper_id) 
+                                            JOIN players p ON team.forward_1 = player_id 
+                                                            OR team.forward_2 = player_id 
+                                                            OR team.forward_3 = player_id 
+                                                            OR team.defender_1 = player_id 
+                                                            OR team.defender_2 = player_id 
+                                            JOIN users USING (user_id) 
+                                            WHERE users.tg_id != {tg_id} 
+                                            ORDER BY CASE WHEN team.forward_1 = player_id 
+                                            THEN 0 WHEN team.forward_2 = player_id THEN 1 
+                                            WHEN team.forward_3 = player_id THEN 2 
+                                            WHEN team.defender_1 = player_id THEN 3 
+                                            WHEN team.defender_2 = player_id THEN 4 END
+                                            ORDER BY random() LIMIT 1
+                ''')
+        return teams
 
     except Exception as _ex:
         print('[INFO] Error ', _ex)
@@ -340,7 +337,6 @@ async def get_opp_commands(tg_id):
     finally:
         if conn:
             await conn.close()
-            return command
             print('[INFO] PostgresSQL closed')
 
 
