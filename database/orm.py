@@ -308,6 +308,7 @@ async def get_opp_commands(tg_id):
                                      host=env('host'))
 
         tg_id_ran = await conn.fetchrow(f'''SELECT tg_id FROM users WHERE users.tg_id != {tg_id} ORDER BY random() LIMIT 1''')
+        print(tg_id_ran['tg_id'])
         teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
                                             team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, 
                                             g.reliability AS g_reliability, g.endurance AS g_endurance, 
