@@ -112,7 +112,7 @@ async def get_indicators(my_commands: list):
         attack += int(my_commands[i]['p_attack']) * (float(my_commands[i]['p_endurance'] / 100))
         deffend += int(my_commands[i]['p_defense']) * (1 + float(my_commands[i]['p_power']/100) * (float(my_commands[i]['p_endurance'] / 100)))
 
-    def_goalkeeper = "{:.0f}".format(float(my_commands[0]['g_defense'] + (float(my_commands[0]['g_reliability']/100) - float(my_commands[0]['g_endurance'] / 100))))
-    return int(def_goalkeeper), attack, deffend
+    def_goalkeeper = "{:.0f}".format(float(my_commands[0]['g_defense'] + (float(my_commands[0]['g_reliability']/100) - float(my_commands[0]['g_endurance'] / 100)))*10)
+    return int(def_goalkeeper), int(attack), int(deffend)
 
 
