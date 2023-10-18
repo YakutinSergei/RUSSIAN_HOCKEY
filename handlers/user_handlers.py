@@ -46,13 +46,16 @@ async def menu_commands(message: Message):
     minutes = seconds / 60
     if hours >= 24 or my_commands[0]['ready']:
         opp_commands = await get_opp_commands(message.from_user.id)
-        print(opp_commands)
-        # my_indicator = await get_indicators(my_commands)
-        # opp_indicator = await get_indicators(opp_commands)
+        while not opp_commands:
+            opp_commands = await get_opp_commands(message.from_user.id)
+        my_indicator = await get_indicators(my_commands)
+        opp_indicator = await get_indicators(opp_commands)
+        print(my_indicator)
+        print(opp_indicator)
         # my_gol = 0
         # opp_gol = 0
         # if my_indicator[1] - opp_indicator[2] > 0:
-        #     for i in range(my_indicator[1] - opp_indicator[2]):
+        #     for i in range(my_indic ator[1] - opp_indicator[2]):
         #         n = random.randint(1, 1000)
         #         if n > opp_indicator[0]:
         #             my_gol += 1
@@ -105,7 +108,7 @@ async def menu_commands(message: Message):
 async def get_indicators(my_commands: list):
     attack = 0
     deffend = 0
-    for i in range(1, 6):
+    for i in range(5):
         attack += int(my_commands[i]['attack']) + (
                     int(my_commands[i]['attack']) * (int(my_commands[i]['endurance'] / 1000)))
         deffend += int(my_commands[i]['defense']) + int(
