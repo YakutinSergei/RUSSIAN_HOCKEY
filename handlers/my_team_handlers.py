@@ -95,13 +95,14 @@ async def my_team_page(callback: CallbackQuery):
     await callback.answer()
 
 
-'''Листание страниц'''
+'''Листание страниц при замене'''
 @router.callback_query(F.data.startswith('ch_team_'))
 async def paging_card(callback: CallbackQuery):
-    print(callback.data)
+    #Получение команды -> ИД и категория
     players = await get_players_team(callback.from_user.id,
                                      callback.data.split("_")[-2])
     pg = int(callback.data.split('_')[2])
+    print(players)
     if callback.data.split('_')[-1] == 'forward':
         if players:
             if callback.data.split("_")[-2] == PLAYERS['goalkeeper']:
@@ -132,6 +133,7 @@ async def paging_card(callback: CallbackQuery):
                                                  PAGE['choice'], 'backward', f'{pg + 1} / {len(players)}',
                                                  'forward'))
 
+    #Выбор игрока при замене
     elif callback.data.split('_')[-1] == 'choice':
         await update_team(callback.from_user.id, players[pg]['id'], int(callback.data.split('_')[3]))
         pg = int(callback.data.split('_')[3])
