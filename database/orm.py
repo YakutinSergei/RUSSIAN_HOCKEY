@@ -271,7 +271,7 @@ async def get_my_commands(tg_id):
 
 
         teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
-                                            team.missed_pucks, team.points, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
+                                            team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
                                             g.endurance AS g_endurance, g.defense AS g_defense, g.pur_price AS g_pur_price, 
                                             g.sal_price AS g_sal_price, p.img AS p_img, p.name AS p_name, p.position AS p_position, 
                                             p.attack AS p_attack, p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
@@ -308,7 +308,7 @@ async def get_opp_commands(tg_id):
                                      host=env('host'))
 
         teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
-                                                    team.missed_pucks, team.points, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
+                                                    team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
                                                     g.endurance AS g_endurance, g.defense AS g_defense, g.pur_price AS g_pur_price, 
                                                     g.sal_price AS g_sal_price, p.img AS p_img, p.name AS p_name, p.position AS p_position, 
                                                     p.attack AS p_attack, p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
