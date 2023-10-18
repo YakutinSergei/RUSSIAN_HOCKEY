@@ -129,28 +129,32 @@ async def paging_card(callback: CallbackQuery):
         await update_team(callback.from_user.id, players[pg]['player_id'], int(callback.data.split('_')[3]))
         pg = int(callback.data.split('_')[3])
         my_commands = await get_my_commands(callback.from_user.id)
+        img = 'p_img'
         if pg > 3:
             pos = PLAYERS['defender']
         elif pg > 0:
             pos = PLAYERS['forward']
         else:
             pos = PLAYERS['goalkeeper']
+            img = 'g_img'
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=my_commands[pg]['img']),
+                                     media=InputMediaPhoto(media=my_commands[pg][img]),
                                      reply_markup=kb_team(f"my_team_{pg}", pos,
                                                           'backward', PAGE['replace'], 'forward'))
     else:
         pg = int(callback.data.split('_')[3])
         my_commands = await get_my_commands(callback.from_user.id)
+        img = 'p_img'
         if pg > 3:
             pos = PLAYERS['defender']
         elif pg > 0:
             pos = PLAYERS['forward']
         else:
             pos = PLAYERS['goalkeeper']
+            img = 'g_img'
 
         await bot.edit_message_media(chat_id=callback.from_user.id, message_id=callback.message.message_id,
-                                     media=InputMediaPhoto(media=my_commands[pg]['img']),
+                                     media=InputMediaPhoto(media=my_commands[pg][img]),
                                      reply_markup=kb_team(f"my_team_{pg}", pos,
                                                           'backward', PAGE['replace'], 'forward'))
     await callback.answer()
