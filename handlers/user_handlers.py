@@ -75,7 +75,7 @@ async def menu_commands(message: Message):
                                       f'Твой навык на льду и стратегические решения помогли тебе достичь успеха.\n'
                                       f'Поздравляю с этой выдающейся победой! 🎉🥳')
         elif my_gol == opp_gol:
-            #await up_command_ready(message.from_user.id, 1, my_gol, opp_gol)
+            await up_command_ready(message.from_user.id, 1, my_gol, opp_gol)
             await message.answer(
                 text=f'{my_commands[0]["name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
                                       f'{opp_commands[0]["name"]}\n\n'
