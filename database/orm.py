@@ -322,12 +322,12 @@ async def get_opp_commands(tg_id):
                                                             OR team.defender_2 = player_id 
                                             JOIN users USING (user_id) 
                                             WHERE users.tg_id != {tg_id} 
-                                            ORDER BY CASE WHEN team.forward_1 = player_id 
+                                            ORDER BY CASE WHEN team.forward_1 = player_id, random() LIMIT 5  
                                             THEN 0 WHEN team.forward_2 = player_id THEN 1 
                                             WHEN team.forward_3 = player_id THEN 2 
                                             WHEN team.defender_1 = player_id THEN 3 
                                             WHEN team.defender_2 = player_id THEN 4 END,
-                                            random() LIMIT 5
+                                            
                 ''')
         return teams
 
