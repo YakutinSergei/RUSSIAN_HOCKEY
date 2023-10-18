@@ -69,16 +69,16 @@ async def menu_commands(message: Message):
 
         if my_gol > opp_gol:
             await up_command_ready(message.from_user.id, 3, my_gol, opp_gol)  # Делаем готовность False, обновляем время на текущее
-            await message.answer(text=f'{my_commands[0]["t_name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
-                                      f'{opp_commands[0]["t_name"]}\n\n'
+            await message.answer(text=f'{my_commands[0]["name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
+                                      f'{opp_commands[0]["name"]}\n\n'
                                       f'Хорошая работа! 🏒 Ты смог одержать победу в этой хоккейной игре!\n'
                                       f'Твой навык на льду и стратегические решения помогли тебе достичь успеха.\n'
                                       f'Поздравляю с этой выдающейся победой! 🎉🥳')
         elif my_gol == opp_gol:
             #await up_command_ready(message.from_user.id, 1, my_gol, opp_gol)
             await message.answer(
-                text=f'{my_commands[0]["t_name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
-                                      f'{opp_commands[0]["t_name"]}\n\n'
+                text=f'{my_commands[0]["name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
+                                      f'{opp_commands[0]["name"]}\n\n'
                      f'Ничья - это также уважаемый результат!\n'
                      f'В этом матче ты сумел удержать равновесие и завершить игру с равным счетом.\n'
                      f'Твоя способность адаптироваться к сопернику и держаться в тяжелых ситуациях '
@@ -90,8 +90,8 @@ async def menu_commands(message: Message):
         else:
             await up_command_ready(message.from_user.id, 0, my_gol, opp_gol)
             await message.answer(
-                text=f'{my_commands[0]["t_name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
-                                      f'{opp_commands[0]["t_name"]}\n\n'
+                text=f'{my_commands[0]["name"]}   <b><u>{my_gol}:{opp_gol}</u></b>   '
+                                      f'{opp_commands[0]["name"]}\n\n'
                      f'К сожалению, в этом матче тебе не удалось одержать победу. Но не отчаивайся!\n'
                      f'🏒💪 Поражение - это всего лишь временный результат, и оно дает тебе возможность '
                      f'изучить свои ошибки и стать еще лучше. Уверен, что ты сможешь восстановиться, '
