@@ -327,10 +327,11 @@ async def get_opp_commands(tg_id):
                                             OR team.defender_1 = player_id 
                                             OR team.defender_2 = player_id 
                                             JOIN users USING (user_id) 
-                                            WHERE users.tg_id = (SELECT tg_id 
+                                            WHERE team.user_id = (SELECT user_id 
                                                                 FROM users 
                                                                 WHERE users.tg_id != {tg_id} 
                                                                 ORDER BY random() LIMIT 1)
+                                                AND team.user_id IS NOT NULL
                                             ORDER BY CASE WHEN team.forward_1 = player_id 
                                             THEN 0 WHEN team.forward_2 = player_id 
                                             THEN 1 WHEN team.forward_3 = player_id 
