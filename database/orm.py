@@ -308,26 +308,28 @@ async def get_opp_commands(tg_id):
                                      host=env('host'))
 
         teams = await conn.fetch(f'''SELECT team.id, team.user_id, team.name, team.ready, team.count, team.pucks_scored, 
-                                                    team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, g.reliability AS g_reliability, 
-                                                    g.endurance AS g_endurance, g.defense AS g_defense, g.pur_price AS g_pur_price, 
-                                                    g.sal_price AS g_sal_price, p.img AS p_img, p.name AS p_name, p.position AS p_position, 
-                                                    p.attack AS p_attack, p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
-                                                    p.pur_price AS p_pur_price, p.sal_price AS p_sal_price 
+                                            team.missed_pucks, team.points, team.game_date, g.img AS g_img, g.name AS g_name, 
+                                            g.reliability AS g_reliability, g.endurance AS g_endurance, 
+                                            g.defense AS g_defense, g.pur_price AS g_pur_price, g.sal_price AS g_sal_price, 
+                                            p.img AS p_img, p.name AS p_name, p.position AS p_position, p.attack AS p_attack, 
+                                            p.endurance AS p_endurance, p.power AS p_power, p.defense AS p_defense, 
+                                            p.pur_price AS p_pur_price, p.sal_price AS p_sal_price 
                                             FROM team 
                                             JOIN goalkeepers g USING (goalkeeper_id) 
                                             JOIN players p ON team.forward_1 = player_id 
-                                                            OR team.forward_2 = player_id 
-                                                            OR team.forward_3 = player_id 
-                                                            OR team.defender_1 = player_id 
-                                                            OR team.defender_2 = player_id 
+                                            OR team.forward_2 = player_id 
+                                            OR team.forward3 = player_id 
+                                            OR team.defender_1 = player_id 
+                                            OR team.defender_2 = player_id 
                                             JOIN users USING (user_id) 
                                             WHERE users.tg_id != {tg_id} 
                                             ORDER BY random() LIMIT 1, 
                                             CASE WHEN team.forward_1 = player_id 
-                                            THEN 0 WHEN team.forward_2 = player_id THEN 1 
-                                            WHEN team.forward_3 = player_id THEN 2 
-                                            WHEN team.defender_1 = player_id THEN 3 
-                                            WHEN team.defender_2 = player_id THEN 4 END
+                                            THEN 0 WHEN team.forward_2 = player_id 
+                                            THEN 1 WHEN team.forward_3 = player_id 
+                                            THEN 2 WHEN team.defender_1 = player_id 
+                                            THEN 3 WHEN team.defender_2 = player_id 
+                                            THEN 4 END
                                             
                 ''')
         return teams
